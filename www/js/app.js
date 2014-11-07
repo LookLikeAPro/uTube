@@ -192,8 +192,7 @@ app.controller('VideosController', function ($scope, $http, $log,$ionicSideMenuD
     $scope.history = VideosService.getHistory();
     $scope.playlist = true;
     $scope.test= $localstorage.get('count',67);
-    $scope.tab = [true,false,false];
-
+    $scope.tab = [true, false, false];
     $scope.launch = function (id, title) {
         VideosService.launchPlayer(id, title);
         VideosService.archiveVideo(id, title);
