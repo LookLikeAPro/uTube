@@ -33,6 +33,7 @@
                     </div>
                 </div>
             </div>
+
             <div style="width:100%;height:49px; border-color: #cc2311;background-color: #ef4e3a; display: -webkit-box; display: -webkit-flex;display: -moz-box; display: -moz-flex; display: -ms-flexbox; display: flex; -webkit-box-direction: normal;-webkit-box-orient: horizontal;-webkit-flex-direction: horizontal;-moz-flex-direction: horizontal;-ms-flex-direction: horizontal;flex-direction: horizontal;-webkit-box-pack: center;-ms-flex-pack: center;-webkit-justify-content: center;-moz-justify-content: center;justify-content: center;-webkit-transform: translate3d(0, 0, 0);-moz-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);border-color: #b2b2b2;background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);bottom: 0;z-index: 5;background-size: 0;
   line-height: 49px; ">
                 <a class="tab-item active" ng-click="tab(1)"
@@ -47,6 +48,10 @@
                    style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
                     Comments
                 </a>
+                <a class="tab-item active" ng-click="tab(3)"
+                   style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
+                    Playlist
+                </a>
             </div>
             <ion-pane style="position:relative" ng-show="tab[1]">
                 <p>{{ youtube.videoTitle }}</p>
@@ -55,10 +60,10 @@
             <ion-pane style="position:relative" ng-show="tab[2]">
                 <ion-list id="upcoming" data-ng-show="playlist">
                     <ion-item class="item item-thumbnail-left" href="#" data-ng-repeat="video in upcoming"
-                              data-ng-class="{active: youtube.videoTitle == video.title}">
-                        <img src="cover.jpg">
+                              data-ng-class="{active: youtube.videoTitle == video.title}" data-ng-click="launch(video.id, video.title)">
+                        <!--<img src="cover.jpg">-->
                         <!--<p data-ng-click="delete('upcoming', video.id)">delete</p>-->
-                        <h2 data-ng-click="launch(video.id, video.title)">{{video.title}}</h2>
+                        <h2 >{{video.title}}</h2>
 
                         <p data-ng-click="launch(video.id, video.title)">{{video.description}}</p>
                         <ion-delete-button class="ion-minus-circled"
@@ -76,15 +81,17 @@
     <!-- Left menu -->
     <ion-side-menu side="left" expose-aside-when="large">
         <ion-header-bar class="item-input-inset bar-assertive">
-            <label class="item-input-wrapper">
-                <i class="icon ion-ios7-search placeholder-icon"></i>
-                <input type="search" placeholder="Search" data-ng-model="query">
-            </label>
+            <form ng-submit="search()">
+                <label class="item-input-wrapper">
+                    <i class="icon ion-ios7-search placeholder-icon"></i>
+                    <input type="search" placeholder="Search" data-ng-model="query">
+                </label>
+            </form>
             <button class="button button-clear">
                 Cancel
             </button>
         </ion-header-bar>
-        <ion-content>
+        <ion-content style="height:70%">
             <div class="list">
                 <div class="item item-divider">
                     Channels
@@ -94,19 +101,18 @@
                 </div>
                 <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
                     <img class="video-image" data-ng-src="{{ video.thumbnail }}">
-
                     <p class="video-title">{{ video.title }}</p>
-
                     <p class="video-author">{{ video.author }}</p>
-
                     <p class="video-description">{{ video.description }}</p>
                 </div>
                 <div class="item item-divider">
                     Playlists
                 </div>
-
             </div>
         </ion-content>
+        <ion-footer-bar class="bar-stable" style="height:30%; border-top-style: solid; border-top-width: 1px; border-top-color:red">
+        </ion-footer-bar>
+        </div>
     </ion-side-menu>
 </ion-side-menus>
 
