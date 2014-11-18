@@ -1,34 +1,51 @@
-var app = angular.module('uTube', ['ionic'])
+/*
+ Initialization
+ */
+angular.module('ionic.utils', [])
+    .factory('$localstorage', ['$window', function ($window) {
+        return {
+            set: function (key, value) {
+                $window.localStorage[key] = value;
+            },
+            get: function (key, defaultValue) {
+                return $window.localStorage[key] || defaultValue;
+            },
+            setObject: function (key, value) {
+                $window.localStorage[key] = JSON.stringify(value);
+            },
+            getObject: function (key, defaultValue) {
+                return JSON.parse($window.localStorage[key] || JSON.stringify(defaultValue));
+            }
+        }
+    }]);
+// Initializing the AngularJs app
+var app = angular.module('PalmApp', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils']);
+/*
+ Routing
+ */
+app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
 
-app.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
+    $urlRouterProvider.otherwise('/'); // redirects any non-listed urls to the main page of the app.
 
-  });
-    var tag = document.createElement('script');
-    tag.src = "http://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-});
+    // The main page of the app.
+    $stateProvider.state('home', {
+        url: '/',
+        templateUrl: 'templates/home.html',
+    });
 
-// Config
-
-app.config( function ($httpProvider) {
+    // The settings page view
+    $stateProvider.state('search', {
+        url: '/search',
+        templateUrl: 'templates/search.html',
+    });
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
-// Service
-app.service('VideosService', ['$window', '$rootScope', '$log', function ($window, $rootScope, $log) {
-
+/*
+ Services
+ */
+app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localstorage', function ($window, $rootScope, $log, $localstorage, $http) {
     var service = this;
-
     var youtube = {
         ready: false,
         player: null,
@@ -39,7 +56,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
         playerWidth: '640',
         state: 'stopped'
     };
-    var results = [];
+    var results = {channel: [], playlist: [], video: []};
     var upcoming = [
         {id: 'kRJuY6ZDLPo', title: 'La Roux - In for the Kill (Twelves Remix)'},
         {id: '45YSGFctLws', title: 'Shout Out Louds - Illusions'},
@@ -61,14 +78,14 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
         $rootScope.$apply();
     };
 
-    function onYoutubeReady (event) {
+    function onYoutubeReady(event) {
         $log.info('YouTube Player is ready');
         youtube.player.cueVideoById(history[0].id);
         youtube.videoId = history[0].id;
         youtube.videoTitle = history[0].title;
     }
 
-    function onYoutubeStateChange (event) {
+    function onYoutubeStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
             youtube.state = 'playing';
         } else if (event.data == YT.PlayerState.PAUSED) {
@@ -117,20 +134,45 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
         youtube.videoId = id;
         youtube.videoTitle = title;
         return youtube;
-    }
+    };
 
-    this.listResults = function (data) {
-        results.length = 0;
-        for (var i = data.items.length - 1; i >= 0; i--) {
-            results.push({
-                id: data.items[i].id.videoId,
-                title: data.items[i].snippet.title,
-                description: data.items[i].snippet.description,
-                thumbnail: data.items[i].snippet.thumbnails.default.url,
-                author: data.items[i].snippet.channelTitle
-            });
+    this.listResults = function (data, type) {
+        results[type].length = 0;
+        if (type == 'video') {
+            for (var i = data.items.length - 1; i >= 0; i--) {
+                results[type].push({
+                    id: data.items[i].id.videoId,
+                    title: data.items[i].snippet.title,
+                    description: data.items[i].snippet.description,
+                    thumbnail: data.items[i].snippet.thumbnails.default.url,
+                    author: data.items[i].snippet.channelTitle
+                });
+            }
         }
-        return results;
+        else if (type == 'channel') {
+            for (var i = data.items.length - 1; i >= 0; i--) {
+                results[type].push({
+                    id: data.items[i].id.videoId,
+                    title: data.items[i].snippet.title,
+                    description: data.items[i].snippet.description,
+                    thumbnail: data.items[i].snippet.thumbnails.default.url,
+                    author: data.items[i].snippet.channelTitle
+                });
+            }
+        }
+        else if (type == 'playlist') {
+            for (var i = data.items.length - 1; i >= 0; i--) {
+                results[type].push({
+                    id: data.items[i].id.videoId,
+                    title: data.items[i].snippet.title,
+                    description: data.items[i].snippet.description,
+                    thumbnail: data.items[i].snippet.thumbnails.default.url,
+                    author: data.items[i].snippet.channelTitle
+                });
+            }
+        }
+        ;
+        return results[type];
     }
 
     this.queueVideo = function (id, title) {
@@ -175,28 +217,23 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
     };
 
 }]);
+
+
+app.run(function ($localstorage) {
+
+    var tag = document.createElement('script');
+    tag.src = "http://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+});
+
 /*
-app.factory('$localstorage', ['$window', function($window) {
-    return {
-        set: function(key, value) {
-            $window.localStorage[key] = value;
-        },
-        get: function(key, defaultValue) {
-            return $window.localStorage[key] || defaultValue;
-        },
-        setObject: function(key, value) {
-            $window.localStorage[key] = JSON.stringify(value);
-        },
-        getObject: function(key, defaultValue) {
-            return JSON.parse($window.localStorage[key] || JSON.stringify(defaultValue));
-        }
-    }
-}]);*/
-// Controller
-app.controller('VideosController', function ($scope, $http, $log, VideosService, $ionicSideMenuDelegate) {
+ Controllers
+ */
+
+app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate, $http, $sce, $ionicPopup, $ionicPopover, VideosService, $localstorage, $log) {
 
     init();
-
     function init() {
         $scope.youtube = VideosService.getYoutube();
         $scope.results = VideosService.getResults();
@@ -204,12 +241,11 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService,
         $scope.history = VideosService.getHistory();
         $scope.playlist = true;
     }
-    $scope.tab = [true, false, false, false];
+
 
     $scope.launch = function (id, title) {
         VideosService.launchPlayer(id, title);
         VideosService.archiveVideo(id, title);
-        VideosService.deleteVideo($scope.upcoming, id);
         $log.info('Launched id:' + id + ' and title:' + title);
     };
 
@@ -222,7 +258,6 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService,
     $scope.delete = function (list, id) {
         VideosService.deleteVideo(list, id);
     };
-
     $scope.search = function () {
         $http.get('https://www.googleapis.com/youtube/v3/search', {
             params: {
@@ -234,22 +269,74 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService,
                 q: this.query
             }
         })
-            .success( function (data) {
-                VideosService.listResults(data);
-                $log.info(data);
+            .success(function (data) {
+                VideosService.listResults(data, 'video');
             })
-            .error( function () {
-                $log.info('Search error');
-            });
+            .error(function () {});
+
+        $http.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                type: 'playlist',
+                maxResults: '2',
+                part: 'id,snippet',
+                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+                q: this.query
+            }
+        })
+            .success(function (data) {
+                VideosService.listResults(data, 'playlist');
+            })
+            .error(function () {});
+        $http.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                type: 'channel',
+                maxResults: '2',
+                part: 'id,snippet',
+                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+                q: this.query
+            }
+        })
+            .success(function (data) {
+                VideosService.listResults(data, 'channel');
+            })
+            .error(function () {});
     }
 
-    $scope.tabulate = function (state) {
-        $scope.playlist = state;
-    }
-    $scope.tab = function (id){
-        for (i=0;i<4;i++) {
+    $scope.tab = [true, false, false];
+    $scope.tab = function (id) {
+        for (var i = 0; i < 3; i++) {
             $scope.tab[i] = false;
         }
-        $scope.tab[id]=true;
+        $scope.tab[id] = true;
+    };
+
+
+    //===============================Modals Control===================================
+    $ionicModal.fromTemplateUrl('templates/search.html', {
+        scope: $scope,
+        animation: 'slide-in-right'
+    }).then(function (modal) {
+        $scope.searchModal = modal;
+    });
+    $scope.openSearchModal = function () {
+        $scope.searchModal.show();
+    };
+    $scope.closeSearchModal = function () {
+        $scope.searchModal.hide();
+    };
+    $ionicModal.fromTemplateUrl('templates/bookmark.html', {
+        scope: $scope,
+        animation: 'slide-in-right'
+    }).then(function (modal) {
+        $scope.bookmarkModal = modal;
+    });
+    $scope.openBookmarkModal = function () {
+        $scope.bookmarkModal.show();
+    };
+    $scope.closeBookmarkModal = function () {
+        $scope.bookmarkModal.hide();
     };
 });
+

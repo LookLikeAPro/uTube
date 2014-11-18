@@ -1,171 +1,71 @@
-<!doctype html>
-<html data-ng-app="uTube">
-<head>
+<!DOCTYPE html>
+<html>
+
+  <head>
     <meta charset="utf-8">
-    <title></title>
-    <meta name="author" content="J. Thomas">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Palm Note</title>
+    <!-- Google Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300'
+          rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400'
+          rel='stylesheet' type='text/css'>
+    <!-- End of Google Fonts -->
+    <!-- Ionic Javascript and Css -->
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="cordova.js"></script>
+    <script src="lib/ionic/js/ionic.bundle.min.js"></script>
+    <!-- End of Ionic Javascript and Css -->
+
+    <!-- Css dependencies -->
+    <link href="css/foundation-custom.css" rel="stylesheet">
+    <link href="lib/animate.css/animate.min.css" rel="stylesheet">
+    <!-- End of Css dependencies -->
+
+    <!-- Main App Css -->
+    <link href="css/app.css" rel="stylesheet">
+    <!-- End of Main App Css -->
+    <!-- Main App Javascript -->
     <script src="js/app.js"></script>
-</head>
-<body data-ng-controller="VideosController">
-<ion-side-menus>
-    <!-- Center content -->
-    <ion-side-menu-content>
-        <ion-header-bar class="bar-assertive">
-            <button class="button button-icon" ng-click="toggleProjects()">
-                <i class="icon ion-navicon"></i>
-            </button>
-            <h1 class="title">{{ youtube.videoTitle }}</h1>
-            <!-- New Task button-->
-            <button class="button button-clear" ng-click="newTask()">
-                New
-            </button>
+    <!-- End of Main App Javascript -->
+    <!-- Cordova script (this will be a 404 during development) -->
+    <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
+    <script src="cordova.js"></script>
+    <!-- End of cordova script -->
+  </head>
+
+  <body ng-app="PalmApp" ng-controller="ContentCtrl">
+    <ion-side-menus>
+      <!-- Center content -->
+      <ion-side-menu-content >
+        <ion-header-bar align-title="left" class="bar-light topBar">
+          <button class="button button-icon ion-ios7-search" ng-click="openSearchModal()">Search</button>
+          <h1 class="title"></h1>
+          <h1 class="title" style="align:center">{{youtube.videoTitle}}</h1>
+          <button class="button button-icon ion-ios7-bookmarks" ng-click="openBookmarkModal()"></button>
         </ion-header-bar>
-        <ion-content has-header="true" [has-bouncing="true" ]>
-            <div style="background:black; width:100%">
-                <div style="max-width:600px; min-width:300px; height:auto; margin:auto">
-                    <div class="js-video [vimeo, widescreen]">
-                        <div id="placeholder"></div>
-                    </div>
-                </div>
-            </div>
+        <ion-nav-view animation="nav-title-slide-ios7"></ion-nav-view>
+      </ion-side-menu-content>
 
-            <div style="width:100%;height:49px; border-color: #cc2311;background-color: #ef4e3a; display: -webkit-box; display: -webkit-flex;display: -moz-box; display: -moz-flex; display: -ms-flexbox; display: flex; -webkit-box-direction: normal;-webkit-box-orient: horizontal;-webkit-flex-direction: horizontal;-moz-flex-direction: horizontal;-ms-flex-direction: horizontal;flex-direction: horizontal;-webkit-box-pack: center;-ms-flex-pack: center;-webkit-justify-content: center;-moz-justify-content: center;justify-content: center;-webkit-transform: translate3d(0, 0, 0);-moz-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);border-color: #b2b2b2;background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);bottom: 0;z-index: 5;background-size: 0;
-  line-height: 49px; ">
-                <a class="tab-item active" ng-click="tab(1)"
-                   style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-                    Description
-                </a>
-                <a class="tab-item active" ng-click="tab(2)"
-                   style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-                    Related
-                </a>
-                <a class="tab-item active" ng-click="tab(3)"
-                   style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-                    Comments
-                </a>
-                <a class="tab-item active" ng-click="tab(3)"
-                   style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-                    Playlist
-                </a>
-            </div>
-            <ion-pane style="position:relative" ng-show="tab[1]">
-                <p>{{ youtube.videoTitle }}</p>
-            </ion-pane>
-
-            <ion-pane style="position:relative" ng-show="tab[2]">
-                <ion-list id="upcoming" data-ng-show="playlist">
-                    <ion-item class="item item-thumbnail-left" href="#" data-ng-repeat="video in upcoming"
-                              data-ng-class="{active: youtube.videoTitle == video.title}" data-ng-click="launch(video.id, video.title)">
-                        <!--<img src="cover.jpg">-->
-                        <!--<p data-ng-click="delete('upcoming', video.id)">delete</p>-->
-                        <h2 >{{video.title}}</h2>
-
-                        <p data-ng-click="launch(video.id, video.title)">{{video.description}}</p>
-                        <ion-delete-button class="ion-minus-circled"
-                                           ng-click="items.splice($index, 1)">
-                        </ion-delete-button>
-                        <ion-reorder-button class="ion-navicon"
-                                            on-reorder="reorderItem(item, $fromIndex, $toIndex)">
-                        </ion-reorder-button>
-                    </ion-item>
-                </ion-list>
-            </ion-pane>
-        </ion-content>
-    </ion-side-menu-content>
-
-    <!-- Left menu -->
-    <ion-side-menu side="left" expose-aside-when="large">
-        <ion-header-bar class="item-input-inset bar-assertive">
-            <form ng-submit="search()">
-                <label class="item-input-wrapper">
-                    <i class="icon ion-ios7-search placeholder-icon"></i>
-                    <input type="search" placeholder="Search" data-ng-model="query">
-                </label>
-            </form>
-            <button class="button button-clear">
-                Cancel
-            </button>
+      <!-- Left menu -->
+      <ion-side-menu side="left" expose-aside-when="large" class="sideMenuContainer" width="250">
+        <ion-header-bar class="bar-light sideBar">
+          <h1 class="title" style="align:center">Upcoming</h1>
         </ion-header-bar>
-        <ion-content style="height:70%">
-            <div class="list">
-                <div class="item item-divider">
-                    Channels
-                </div>
-                <div class="item item-divider">
-                    Videos
-                </div>
-                <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
-                    <img class="video-image" data-ng-src="{{ video.thumbnail }}">
-                    <p class="video-title">{{ video.title }}</p>
-                    <p class="video-author">{{ video.author }}</p>
-                    <p class="video-description">{{ video.description }}</p>
-                </div>
-                <div class="item item-divider">
-                    Playlists
-                </div>
+        <ion-content class="sideMenuScroll">
+            <div class="list card" data-ng-repeat="video in upcoming" data-ng-class="{active: youtube.videoTitle == video.title}" data-ng-click="launch(video.id, video.title)" >
+              <div class="item item-image">
+                <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
+              </div>
+              <div class="item">
+                <h2 >{{video.title}}</h2>
+                <p>{{video.author}}</p>
+              </div>
             </div>
+          <div style="height:0.1px"></div>
         </ion-content>
-        <ion-footer-bar class="bar-stable" style="height:30%; border-top-style: solid; border-top-width: 1px; border-top-color:red">
-        </ion-footer-bar>
-        </div>
-    </ion-side-menu>
-</ion-side-menus>
+      </ion-side-menu>
+    </ion-side-menus>
+  </body>
 
-
-<!--
-<header>
-    <h1>Juke<strong>Tube</strong></h1>
-    <form id="search" data-ng-submit="search()">
-        <input id="query" name="q" type="text" placeholder="Search for a YouTube video" data-ng-model="query">
-        <input id="submit" type="image" src="search.png" alt="Search">
-    </form>
-    <nav>
-        <a id="play">{{ youtube.state }}</a>
-        <a id="pause">Pause</a>
-    </nav>
-</header>
-<ion-pane>
-
-<div id="results">
-    <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
-        <img class="video-image" data-ng-src="{{ video.thumbnail }}">
-        <p class="video-title">{{ video.title }}</p>
-        <p class="video-author">{{ video.author }}</p>
-        <p class="video-description">{{ video.description }}</p>
-    </div>
-</div>
-<div id="player">
-    <div id="placeholder"></div>
-</div>
-<div id="playlist">
-    <p id="current">{{ youtube.videoTitle }}</p>
-    <ol id="upcoming" data-ng-show="playlist">
-        <li data-ng-repeat="video in upcoming">
-            <p class="item-delete" data-ng-click="delete('upcoming', video.id)">delete</p>
-            <p class="item-title" data-ng-click="launch(video.id, video.title)">{{video.title}}</p>
-        </li>
-    </ol>
-    <ol id="history" data-ng-hide="playlist">
-        <li data-ng-repeat="video in history">
-            <p class="item-delete" data-ng-click="delete('history', video.id)">delete</p>
-            <p class="item-title" data-ng-click="queue(video.id, video.title)">{{video.title}}</p>
-        </li>
-    </ol>
-    <p id="tabs">
-        <a ng-class="{on:playlist}" data-ng-click="tabulate(true)">Upcoming</a>
-        <a ng-class="{on:!playlist}" data-ng-click="tabulate(false)">History</a>
-    </p>
-</div>
-</ion-pane>
-<footer>
-    <em>Concept &amp; Design: <a href="http://jgthms.com">J. Thomas</a></em>
-    Built with <a href="http://angularjs.org/">AngularJS</a>. Source code available on <a href="https://github.com/jgthms/juketube">GitHub</a>.
-</footer>-->
-
-</body>
 </html>
+
