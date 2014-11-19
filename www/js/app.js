@@ -19,7 +19,7 @@ angular.module('ionic.utils', [])
         }
     }]);
 // Initializing the AngularJs app
-var app = angular.module('PalmApp', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils']);
+var app = angular.module('App', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils']);
 /*
  Routing
  */
@@ -215,6 +215,19 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
     this.getHistory = function () {
         return history;
     };
+    this.test = function(){
+        $http.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                type: 'channel',
+                maxResults: '2',
+                part: 'id,snippet',
+                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+                q: this.query
+            }
+        }).success(function(data) {
+            data});
+    };
 
 }]);
 
@@ -232,7 +245,9 @@ app.run(function ($localstorage) {
  */
 
 app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate, $http, $sce, $ionicPopup, $ionicPopover, VideosService, $localstorage, $log) {
-
+$scope.test=function(){
+  VideosService.test();
+};
     init();
     function init() {
         $scope.youtube = VideosService.getYoutube();
@@ -268,6 +283,28 @@ app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicMo
         $scope.tab[id] = true;
     };
 
+    $scope.getVideoInfo = function (id) {
+        $http.get('https://www.googleapis.com/youtube/v3/videos', {
+            params: {
+                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                id: id,
+                part: 'snippet,statistics',
+                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+            }
+        })
+            .success(function (data) {
+                return data;
+            })
+            .error(function () {
+            });
+    };
+
+    $scope.updateUpcoming = function (){
+      for (var i =0; i<$scope.upcoming.length;i++)
+      {
+          $scope.upcoming[i] = $scope.getVideoInfo($scope.upcoming[i].id);
+      }
+    };
 
     //===============================Modals Control===================================
     $ionicModal.fromTemplateUrl('templates/search.html', {
@@ -345,23 +382,5 @@ app.controller('SearchCtrl', function ($scope, $http, $sce, VideosService) {
             .error(function () {
             });
     };
-    $scope.searchExtend = function () {
-        $log.info('extend');
-        $http.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                type: 'video',
-                maxResults: '8',
-                part: 'id,snippet',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                q: this.query
-            }
-        })
-            .success(function (data) {
-                $scope.$broadcast('scroll.infiniteScrollComplete');
-                VideosService.listResults(data, 'video');
-            })
-            .error(function () {
-            });
-    };
+
 });

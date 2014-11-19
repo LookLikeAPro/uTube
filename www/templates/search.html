@@ -2,7 +2,6 @@
   <ion-header-bar class="bar-light sideBar">
     <label class="item-input-wrapper">
       <i class="icon ion-ios7-search placeholder-icon"></i>
-
       <form ng-submit="search()">
         <input type="search" placeholder="Search" data-ng-model="query">
       </form>
@@ -39,6 +38,6 @@
       <p>{{item.description}}</p>
     </a>
     </ion-list>
-
+    <button ng-click="test()" class="button button-clear">Cancel</button>
   </ion-content>
 </ion-modal-view>

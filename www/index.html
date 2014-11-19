@@ -33,7 +33,7 @@
     <!-- End of cordova script -->
   </head>
 
-  <body ng-app="PalmApp" ng-controller="ContentCtrl">
+  <body ng-app="App" ng-controller="ContentCtrl">
     <ion-side-menus>
       <!-- Center content -->
       <ion-side-menu-content >
@@ -62,6 +62,8 @@
               </div>
             </div>
           <div style="height:0.1px"></div>
+          <button ng-click="updateUpcoming()" class="button button-clear">Update PLaylist in Scope</button>
+          <button ng-click="test()" class="button button-clear">Service HTTP</button>
         </ion-content>
       </ion-side-menu>
     </ion-side-menus>
