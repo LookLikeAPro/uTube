@@ -152,7 +152,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         else if (type == 'channel') {
             for (var i = data.items.length - 1; i >= 0; i--) {
                 results[type].push({
-                    id: data.items[i].id.videoId,
+                    id: data.items[i].id.channelId,
                     title: data.items[i].snippet.title,
                     description: data.items[i].snippet.description,
                     thumbnail: data.items[i].snippet.thumbnails.default.url,
@@ -163,7 +163,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         else if (type == 'playlist') {
             for (var i = data.items.length - 1; i >= 0; i--) {
                 results[type].push({
-                    id: data.items[i].id.videoId,
+                    id: data.items[i].id.playlistId,
                     title: data.items[i].snippet.title,
                     description: data.items[i].snippet.description,
                     thumbnail: data.items[i].snippet.thumbnails.default.url,
@@ -225,10 +225,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
                 fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
                 q: this.query
             }
-        }).success(function(data) {
-            data});
+        }).success(alert('test'))
     };
-
 }]);
 
 
@@ -244,7 +242,8 @@ app.run(function ($localstorage) {
  Controllers
  */
 
-app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate, $http, $sce, $ionicPopup, $ionicPopover, VideosService, $localstorage, $log) {
+app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
+                                        $http, $sce, $ionicPopup, $ionicPopover, VideosService, $localstorage, $log) {
 $scope.test=function(){
   VideosService.test();
 };
@@ -305,6 +304,33 @@ $scope.test=function(){
           $scope.upcoming[i] = $scope.getVideoInfo($scope.upcoming[i].id);
       }
     };
+    //========================Gesture Control (Bookmark modal)=======================
+    $scope.lastEventCalled = 'Try to Drag the content up, down, left or rigth';
+    var element = angular.element(document.querySelector('#eventPlaceholder'));
+    var events = [{
+        event: 'dragup',
+        text: 'You dragged me UP!'
+    },{
+        event: 'dragdown',
+        text: 'You dragged me Down!'
+    },{
+        event: 'dragleft',
+        text: 'You dragged me Left!'
+    },{
+        event: 'dragright',
+        text: 'You dragged me Right!'
+    },{
+        event: 'tap',
+        text: 'You dragged me Right!'
+    }];
+
+    angular.forEach(events, function(obj){
+        $ionicGesture.on(obj.event, function (event) {
+            $scope.$apply(function () {
+                $scope.lastEventCalled = obj.text;
+            });
+        }, element);
+    });
 
     //===============================Modals Control===================================
     $ionicModal.fromTemplateUrl('templates/search.html', {
@@ -382,5 +408,20 @@ app.controller('SearchCtrl', function ($scope, $http, $sce, VideosService) {
             .error(function () {
             });
     };
-
+    $scope.searchChannel = function (id) {
+        alert(id);
+        $http.get('https://www.googleapis.com/youtube/v3/channels', {
+                params: {
+                    key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                    id: id,
+                    part: 'id',
+                }
+        })
+            .success(function (data) {
+                alert(data);
+                $scope.closeBookmarkModal();
+            })
+            .error(function () {
+            });
+    };
 });
