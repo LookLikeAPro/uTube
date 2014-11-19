@@ -1,0 +1,92 @@
+<ion-content id="palmNote">
+    <section class="noteCategories" align="center" id="section" ng-switch="palmNote.type">
+        <section ng-switch-when="0">
+            <div class="topHeader textType">
+                <i class="ion-ios7-paper"></i>
+                <!--<div ng-include="'templates/followUpHeader.html'"></div>-->
+            </div>
+        </section>
+        <section ng-switch-when="1">
+            <div class="topHeader addressType">
+                <i class="ion-ios7-location"></i>
+            </div>
+        </section>
+        <section ng-switch-when="2">
+            <div class="topHeader linkType">
+                <i class="ion-ios7-bookmarks"></i>
+            </div>
+        </section>
+        <section ng-switch-when="3">
+            <div class="topHeader passwordType">
+                <i class="ion-ios7-locked"></i>
+            </div>
+        </section>
+        <section ng-switch-when="4">
+            <div class="topHeader phoneType">
+                <i class="ion-ios7-telephone"></i>
+            </div>
+        </section>
+        <section ng-switch-when="5">
+            <div class="topHeader emailType">
+                <i class="ion-ios7-email"></i>
+            </div>
+        </section>
+    </section>
+
+    <div class="noteContent">
+        <h3>{{palmNote.name}}</h3>
+        <section ng-switch="palmNote.type">
+            <section ng-switch-default>
+                <div marked="palmNote.value"></div>
+            </section>
+            <section ng-switch-when="1">
+                <span class="address">{{palmNote.value}}</span>
+                <div class="expandToFrame flex-video">
+                    <iframe height="500" frameborder="0"
+                            ng-src="{{trustSrc(GooleMapsSrc)}}">
+                    </iframe>
+                </div>
+            </section>
+            <section ng-switch-when="2">
+                <span class="link">{{palmNote.value}}</span>
+                <a class="button button-full button-light"
+                    ng-click="openInBrowser()"><i class="ion-ios7-browsers-outline"></i> Open
+                    in browser</a>
+            </section>
+            <section ng-switch-when="3">
+                <label class="item-floating-label">
+                    <span class="input-label">Secret Pin</span>
+                    <input ng-model="inputtedPin" type="tel"
+                           ng-keypress="revealPassword(inputtedPin)"
+                           ng-keyup="revealPassword(inputtedPin)"
+                           ng-keydown="revealPassword(inputtedPin)"
+                           ng-blur="revealPassword(inputtedPin)"
+                           placeholder="Your secret pin">
+                </label>
+                <div class="password" ng-show="showPassword">
+                    {{palmNote.name}} is "{{palmNote.value}}"
+                </div>
+                <div class="password"ng-hide="showPassword"
+                     align="center">
+                    <span>Please enter your secret pin to view the password.</span>
+                </div>
+            </section>
+            <section ng-switch-when="4">
+                <span class="link">{{palmNote.value}}</span>
+                <a class="button button-full button-light"
+                   ng-href="tel:{{palmNote.value}}"><i class="ion-ios7-telephone-outline"></i> Call</a>
+            </section>
+            <section ng-switch-when="5">
+                <span class="link">{{palmNote.value}}</span>
+                <a class="button button-full button-light"
+                   ng-href="mailto:{{palmNote.value}}"><i class="ion-ios7-paperplane-outline"></i> Shoot
+                    them an email</a>
+            </section>
+        </section>
+    </div>
+    <!--
+    <div class="followUps">
+        <button ng-click="openFollowUpEditor()">test</button>
+    </div>
+    -->
+</ion-content>

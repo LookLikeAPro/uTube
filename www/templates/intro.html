@@ -1,0 +1,53 @@
+<ion-content class="introPage" style="top:0;z-index:11;">
+    <section>
+        <section ng-hide="initialLogin">
+            <div class="intro first" align="center">
+                <h1 class="animated bounceInDown">Palm <strong>Note</strong></h1>
+                <p class="animated bounceIn"> A minimal note taking app built for speed.</p>
+            </div>
+            <div class="loginButtons" align="center">
+                <button class="googleLogin animated fadeInDownBig" ng-click="login();">
+                    <div class="row">
+                        <div class="col-10">
+                            <i class="icon ion-social-googleplus"></i>
+                        </div>
+                        <div class="col-90" style="padding-top:11px;padding-left:20px;">
+                            Sign in using <strong>Google</strong>
+                        </div>
+                    </div>
+                </button>
+                <button class="fbLogin animated fadeInDownBig Blue" ng-click="loginFB();">
+                    <div class="row">
+                        <div class="col-10">
+                            <i class="icon ion-social-facebook"></i>
+                        </div>
+                        <div class="col-90" style="padding-top:11px;padding-left:20px;">
+                            Sign in using <strong>Facebook</strong>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </section>
+        <section ng-show="initialLogin">
+            <div class="intro" align="center">
+                <h1 class="animated bounceInDown" style="margin-bottom: 20px;font-size:30px;">Howdy <strong>{{settings.user.name}}</strong></h1>
+                <img class="userPic animated bounceIn" ng-src="{{settings.user.profilePic}}">
+            </div>
+            <div class="loginButtons" align="center">
+                <button class="continueButton Green animated fadeInDownBig" ng-click="proceed();">
+                    <div class="row">
+                        <div class="col-10">
+                            <i class="icon ion-ios7-checkmark-outline"></i>
+                        </div>
+                        <div class="col-90" style="padding-top:11px;padding-left:20px;">
+                            Continue to Palm Note
+                        </div>
+                    </div>
+                </button>
+
+            </div>
+
+        </section>
+    </section>
+
+</ion-content>

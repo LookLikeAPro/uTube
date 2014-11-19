@@ -1,0 +1,94 @@
+<ion-content id="searchCtrl">
+    <ion-slide-box show-pager="false" active-slide="catType"
+                   align="center" on-slide-changed="updateCatType($index)"
+                   class="noteCategories">
+        <ion-slide>
+            <div class="topHeader textType" ng-click="openNewPalmNoteModal(0)">
+                <i class="ion-ios7-paper"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader addressType" ng-click="openNewPalmNoteModal(1)">
+                <i class="ion-ios7-location"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader linkType" ng-click="openNewPalmNoteModal(2)">
+                <i class="ion-ios7-bookmarks"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader passwordType" ng-click="openNewPalmNoteModal(3)">
+                <i class="ion-ios7-locked"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader phoneType" ng-click="openNewPalmNoteModal(4)">
+                <i class="ion-ios7-telephone"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader emailType" ng-click="openNewPalmNoteModal(5)">
+                <i class="ion-ios7-email"></i>
+            </div>
+        </ion-slide>
+        <ion-slide>
+            <div class="topHeader searchHeader" align="left">
+                <div class="stats">
+                    <label class="item-floating-label">
+                        <input ng-model="filterTerm.name" type="text"
+                               placeholder="Search">
+                    </label>
+                    <div class="buttonHolder" align="center">
+                        <button ng-click="setType(0)" class="textType">
+                            <i class="ion-ios7-copy"></i>
+                        </button>
+                        <button ng-click="setType(1)" class="addressType">
+                            <i class="ion-ios7-location"></i>
+                        </button>
+                        <button ng-click="setType(2)" class="linkType">
+                            <i class="ion-ios7-bookmarks"></i>
+                        </button>
+                        <button ng-click="setType(3)" class="passwordType">
+                            <i class="ion-ios7-locked"></i>
+                        </button>
+                        <button ng-click="setType(4)" class="phoneType">
+                            <i class="ion-ios7-telephone"></i>
+                        </button>
+                        <button ng-click="setType(5)" class="emailType">
+                            <i class="ion-ios7-email"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ion-slide>
+    </ion-slide-box>
+    <section class="palmNotes">
+        <ion-slide-box show-pager="false" active-slide="0" ng-repeat="note in palmNotes | filter:filterTerm | reverse track by $index">
+            <ion-slide>
+                <div ui-sref="palmNote({palmNoteIndex: note.$id})"
+                     class="palmNote">
+                    <h2>{{note.name}}</h2>
+                    <i ng-class="getIcon(note.type)"></i>
+                </div>
+            </ion-slide>
+            <ion-slide>
+                <div class="actions">
+                    <div class="row">
+                        <div class="col">
+                            <button ng-click="deletePalmNote(note.$id)" class="button-clear button button-assertive">
+                                <i class="icon ion-ios7-trash-outline"></i> Delete
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button ng-click="copy(note.value)" class="button-clear button button-clear">
+                                <i class="icon ion-ios7-copy-outline"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </ion-slide>
+        </ion-slide-box>
+    </section>
+</ion-content>
+

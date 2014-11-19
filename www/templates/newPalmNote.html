@@ -1,0 +1,128 @@
+<ion-modal-view>
+    <ion-header-bar align-title="center" ng-class="newNoteColor"
+                    class="bar-light topBar">
+        <div class="buttons">
+            <button ng-click="closeNewPalmNoteModal()"
+                    class="button button-icon icon black">Cancel</button>
+        </div>
+        <h1 class="title newPalm">Palm Note</h1>
+        <div class="buttons">
+            <button ng-click="addPalmNote(formData.newNoteName, formData.newNoteValue, formData.newNoteType)"
+                    class="button button-icon icon">Done</button>
+        </div>
+    </ion-header-bar>
+    <ion-content class="newNote">
+        <div class="newNoteCategories">
+            <ion-slide-box ng-class="formData.newNoteColor" class="typeSliderContainer padding"
+                           show-pager="false" active-slide="formData.newNoteType"
+                           on-slide-changed="setNoteColor($index)"
+                           delegate-handle="addSlider"
+                           align="center">
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-paper"></i>
+                </ion-slide>
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-location"></i>
+                </ion-slide>
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-bookmarks"></i>
+                </ion-slide>
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-locked"></i>
+                </ion-slide>
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-telephone"></i>
+                </ion-slide>
+                <ion-slide class="typeSlider">
+                    <i class="ion-ios7-email"></i>
+                </ion-slide>
+            </ion-slide-box>
+        </div>
+        <section ng-switch="formData.newNoteType" ng-init="newNoteType = 0;">
+            <div class="newNoteContainer">
+                <div class="actionButtons">
+                    <!--
+                    <button ng-click="addVideo()"
+                            class="button button-icon icon"><i class="ion-videocamera"></i></button>
+                    -->
+                    <button ng-click="scanBarCode()"
+                            class="button button-icon icon"><i class="ion-qr-scanner"></i></button>
+                </div>
+                <section ng-switch-when="0">
+                    <div class="typeInput">
+                        <input placeholder="Note identifier" ng-model="formData.newNoteName"
+                               type="text">
+                        <div class="textarea" ng-click="openNewPalmNoteModalEditor()" ng-switch="formData.newNoteValue">
+                            <div ng-switch-default marked="formData.newNoteValue"></div>
+                            <div ng-switch-when="" class="placeholder">
+                                Note content goes in here.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section ng-switch-when="1">
+                    <div class="typeInput">
+                        <input placeholder="Address identifier" ng-model="formData.newNoteName"
+                               type="text">
+                        <input placeholder="Address details" ng-blur="updateAddress(addressText)"
+                               type="text" ng-model="addressText"
+                               autocapitalize="off"
+                               autocorrect="off">
+                    </div>
+                    <div class="noteContent" style="padding:10px;width:100%;">
+                        <div class="flex-video">
+                            <iframe height="300" frameborder="0"
+                                    style="width: 100%;"
+                                    ng-src="{{trustSrc(GooleMapsSrc)}}">
+                            </iframe>
+                        </div>
+                    </div>
+                </section>
+                <section ng-switch-when="2">
+                    <div class="typeInput">
+                        <input placeholder="Link identifier" ng-model="formData.newNoteName"
+                               type="text">
+                        <input ng-model="formData.newNoteValue" placeholder="http://"
+                               type="text"
+                               autocapitalize="off"
+                               autocorrect="off">
+                    </div>
+                </section>
+                <section ng-switch-when="3">
+                    <div class="typeInput">
+                        <input placeholder="Password identifier"
+                               ng-model="formData.newNoteName"
+                               type="text">
+                        <input ng-model="formData.newNoteValue" placeholder="password"
+                               type="text"
+                               autocapitalize="off"
+                               autocorrect="off">
+                    </div>
+                </section>
+                <section ng-switch-when="4">
+                    <div class="typeInput">
+                        <input placeholder="Phone number identifier"
+                               ng-model="formData.newNoteName"
+                               type="text">
+                        <input ng-model="formData.newNoteValue" placeholder="Phone number"
+                               type="tel"
+                               autocapitalize="off"
+                               autocorrect="off">
+                    </div>
+                </section>
+                <section ng-switch-when="5">
+                    <div class="typeInput">
+                        <input placeholder="Email identifier" ng-model="formData.newNoteName"
+                               type="text">
+                        <input ng-model="formData.newNoteValue" placeholder="Email"
+                               type="email"
+                               autocapitalize="off"
+                               autocorrect="off">
+                    </div>
+                </section>
+            </div>
+        </section>
+
+
+    </ion-content>
+</ion-modal-view>

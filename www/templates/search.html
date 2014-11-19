@@ -1,0 +1,42 @@
+<ion-content class="padding">
+  <div class="list" >
+    <div class="list list-inset">
+        <label class="item item-input" >
+          <i class="icon ion-search placeholder-icon"></i>
+          <form ng-submit="search()" style="width:100%">
+          <input ng-keypress="search()" type="search" placeholder="Search" data-ng-model="query">
+            </form>
+          <form ng-submit="closeSearchModal()">
+              <button class="button button-icon">Cancel&nbsp&nbsp</button>
+          </form>
+        </label>
+    </div>
+    <div class="item item-divider">
+      Channels
+    </div>
+    <a data-ng-repeat="item in results['channel']" class="item item-thumbnail-left" data-ng-click="launch(video.id, video.title)">
+      <img data-ng-src="{{ item.thumbnail }}">
+      <h2>{{item.title}}</h2>
+      <p>{{item.author}}</p>
+      <p>{{item.description}}</p>
+    </a>
+    <div class="item item-divider">
+      Playlists
+    </div>
+    <a data-ng-repeat="item in results['playlist']" class="item item-thumbnail-left" data-ng-click="launch(video.id, video.title)">
+      <img data-ng-src="{{ item.thumbnail }}">
+      <h2>{{item.title}}</h2>
+      <p>{{item.author}}</p>
+      <p>{{item.description}}</p>
+    </a>
+    <div class="item item-divider">
+      Videos
+    </div>
+    <a data-ng-repeat="item in results['video']" class="item item-thumbnail-left" data-ng-click="launch(item.id, item.title)">
+      <img data-ng-src="{{ item.thumbnail }}">
+      <h2>{{item.title}}</h2>
+      <p>{{item.author}}</p>
+      <p>{{item.description}}</p>
+    </a>
+  </div>
+</ion-content>

@@ -1,0 +1,41 @@
+<ion-popover-view>
+    <ion-content>
+        <div class="list">
+            <button ng-click="deletePalmNote()" class="item button-block item-icon-left"
+                    style="color:rgba(237,85,101, 0.6);text-align: left;">
+                <i class="icon ion-ios7-trash-outline"></i>
+                Delete "{{palmNote.name}}"
+            </button>
+            <button ng-click="copy()" class="item button-block item-icon-left"
+                    style="text-align: left;">
+                <i class="icon ion-ios7-copy-outline"></i>
+                Copy to clipboard
+            </button>
+            <div class="item item-divider">
+                Reminder
+            </div>
+            <div ng-switch="reminderSet">
+                <div ng-switch-when="true">
+                    <div class="reminder">
+                        <i class="ion-ios7-alarm-outline"></i>
+                        <p>Due on: <strong>{{reminderMessage}}</strong></p>
+                    </div>
+                    <button ng-click="editReminder()" class="item button-block item-icon-left" style="text-align: left;">
+                        <i class="icon ion-ios7-compose-outline"></i>
+                        Edit the reminder
+                    </button>
+                    <button ng-click="removeReminder()" class="item button-block item-icon-left" style="color:rgba(237,85,101, 0.6);text-align: left;">
+                        <i class="icon ion-ios7-close-empty"></i>
+                        Remove the reminder
+                    </button>
+                </div>
+                <div ng-switch-default>
+                    <button ng-click="addReminder()" class="item button-block item-icon-left" style="text-align: left;">
+                        <i class="icon ion-ios7-alarm-outline"></i>
+                       Add a reminder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-popover-view>
