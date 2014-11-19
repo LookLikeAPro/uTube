@@ -258,6 +258,45 @@ app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicMo
     $scope.delete = function (list, id) {
         VideosService.deleteVideo(list, id);
     };
+
+
+    $scope.tab = [true, false, false];
+    $scope.tab = function (id) {
+        for (var i = 0; i < 3; i++) {
+            $scope.tab[i] = false;
+        }
+        $scope.tab[id] = true;
+    };
+
+
+    //===============================Modals Control===================================
+    $ionicModal.fromTemplateUrl('templates/search.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function (modal) {
+        $scope.searchModal = modal;
+    });
+    $scope.openSearchModal = function () {
+        $scope.searchModal.show();
+    };
+    $scope.closeSearchModal = function () {
+        $scope.searchModal.hide();
+    };
+    $ionicModal.fromTemplateUrl('templates/bookmark.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function (modal) {
+        $scope.bookmarkModal = modal;
+    });
+    $scope.openBookmarkModal = function () {
+        $scope.bookmarkModal.show();
+    };
+    $scope.closeBookmarkModal = function () {
+        $scope.bookmarkModal.hide();
+    };
+});
+
+app.controller('SearchCtrl', function ($scope, $http, $sce, VideosService) {
     $scope.search = function () {
         $http.get('https://www.googleapis.com/youtube/v3/search', {
             params: {
@@ -272,7 +311,8 @@ app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicMo
             .success(function (data) {
                 VideosService.listResults(data, 'video');
             })
-            .error(function () {});
+            .error(function () {
+            });
 
         $http.get('https://www.googleapis.com/youtube/v3/search', {
             params: {
@@ -287,7 +327,8 @@ app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicMo
             .success(function (data) {
                 VideosService.listResults(data, 'playlist');
             })
-            .error(function () {});
+            .error(function () {
+            });
         $http.get('https://www.googleapis.com/youtube/v3/search', {
             params: {
                 key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
@@ -301,42 +342,26 @@ app.controller('ContentCtrl', function ($scope, $ionicSideMenuDelegate, $ionicMo
             .success(function (data) {
                 VideosService.listResults(data, 'channel');
             })
-            .error(function () {});
-    }
-
-    $scope.tab = [true, false, false];
-    $scope.tab = function (id) {
-        for (var i = 0; i < 3; i++) {
-            $scope.tab[i] = false;
-        }
-        $scope.tab[id] = true;
+            .error(function () {
+            });
     };
-
-
-    //===============================Modals Control===================================
-    $ionicModal.fromTemplateUrl('templates/search.html', {
-        scope: $scope,
-        animation: 'slide-in-right'
-    }).then(function (modal) {
-        $scope.searchModal = modal;
-    });
-    $scope.openSearchModal = function () {
-        $scope.searchModal.show();
-    };
-    $scope.closeSearchModal = function () {
-        $scope.searchModal.hide();
-    };
-    $ionicModal.fromTemplateUrl('templates/bookmark.html', {
-        scope: $scope,
-        animation: 'slide-in-right'
-    }).then(function (modal) {
-        $scope.bookmarkModal = modal;
-    });
-    $scope.openBookmarkModal = function () {
-        $scope.bookmarkModal.show();
-    };
-    $scope.closeBookmarkModal = function () {
-        $scope.bookmarkModal.hide();
+    $scope.searchExtend = function () {
+        $log.info('extend');
+        $http.get('https://www.googleapis.com/youtube/v3/search', {
+            params: {
+                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                type: 'video',
+                maxResults: '8',
+                part: 'id,snippet',
+                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+                q: this.query
+            }
+        })
+            .success(function (data) {
+                $scope.$broadcast('scroll.infiniteScrollComplete');
+                VideosService.listResults(data, 'video');
+            })
+            .error(function () {
+            });
     };
 });
-
