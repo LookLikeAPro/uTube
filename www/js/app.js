@@ -187,7 +187,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '&q=' + term);
         results[type] = data.items;
     };
-    this.getInfo = function (id, type) {
+    this.getChannelInfo = function (id) {
         data = httpGet('https://www.googleapis.com/youtube/v3/channels' +
         '?key=' + key +
         '&id=' + id +
@@ -196,9 +196,10 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
         details.channel[0].id = data.items[0].id;
         details.channel[0].brandingSettings = data.items[0].brandingSettings;
-        alert(details.channel[0].brandingSettings.channel.featuredChannelsUrls);
         //keywords, featuredChannelsUrls,profileColor,image.bannerImageUrl/bannerMobileImageUrl/bannerTabletLowImageUrl/bannerTabletImageUrl/bannerTvImageUrl
         service.getChannelVideo(details.channel[0].id);
+        service.getChannelPlaylist(details.channel[0].id);
+        service.getChannelFeatured(details.channel[0].brandingSettings.channel.featuredChannelsUrls);
     };
     this.getChannelVideo = function (id) {
         data = httpGet('https://www.googleapis.com/youtube/v3/search' +
@@ -208,6 +209,22 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '&part=' + 'id,snippet' +
         '&order=' + 'date');
         details.channel[0].video = data.items;
+    };
+    this.getChannelPlaylist = function (id) {
+        data = httpGet('https://www.googleapis.com/youtube/v3/playlists' +
+        '?key=' + key +
+        '&channelId=' + id +
+        '&maxResults=' + '10' +
+        '&part=' + 'id,snippet' +
+        '&order=' + 'date');
+        details.channel[0].playlist = data.items;
+    };
+    this.getChannelFeatured = function (id) {
+        details.channel[0].featured = httpGet('https://www.googleapis.com/youtube/v3/channels' +
+        '?key=' + key +
+        '&id=' + id +
+        '&part=' + 'snippet').items;
+        console.log(details.channel[0].featured);
     };
 }]);
 
@@ -247,7 +264,6 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         VideosService.deleteVideo(list, id);
     };
 
-
     $scope.tab = [true, false, false];
     $scope.tab = function (id) {
         for (var i = 0; i < 3; i++) {
@@ -262,7 +278,7 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         VideosService.search(this.query, 'video', '8', '');
     };
     $scope.searchChannel = function (id) {
-        VideosService.getInfo(id, 'channel');
+        VideosService.getChannelInfo(id);
         $scope.openModal('channel');
     };
 
@@ -336,6 +352,12 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     }).then(function (modal) {
         $scope.modal.channel = modal;
     });
+    $ionicModal.fromTemplateUrl('templates/playlist.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function (modal) {
+        $scope.modal.playlist = modal;
+    });
     $scope.openModal = function (id) {
         $scope.modal[id].show();
     };
@@ -363,7 +385,6 @@ app.controller('ChannelCtrl', function ($scope, VideosService) {
     $scope.tab = 1;
     $scope.tabTo = function (id) {
         $scope.tab = id;
-        alert(details.channel[0].brandingSettings.featuredChannelsUrls);
     }
     $scope.searchChannelVideo = function (id) {
         VideosService.getChannelVideo(id);

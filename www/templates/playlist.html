@@ -1,9 +1,10 @@
-<ion-modal-view ng-controller="ChannelCtrl">
+<ion-modal-view>
     <ion-header-bar align-title="center" class="bar-light">
         <div class="buttons">
             <button class="button button-icon icon black">Edit</button>
         </div>
         <h1 class="title newPalm">{{details.channel[0].title}}</h1>
+
         <div class="buttons">
             <button ng-click="closeModal('channel')" class="button button-icon icon">Cancel</button>
         </div>
@@ -48,7 +49,7 @@
     <!-------------------------------------------------------------------------------->
     <ion-content style="top:92px" ng-show="tab==1">
         <ion-list>
-            <a data-ng-repeat="item in details.channel[0].video" class="item item-thumbnail-left"
+            <a ng-repeat="item in details.channel[0].video" class="item item-thumbnail-left"
                ng-click="launch(item.id, item.title)">
                 <img style="margin-top:6px" data-ng-src="{{item.snippet.thumbnails.default.url}}">
 
@@ -83,6 +84,7 @@
                 <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
 
                 <h2>{{item.snippet.title}}</h2>
+
                 <p>{{item.snippet.description}}</p>
             </a>
         </ion-list>
