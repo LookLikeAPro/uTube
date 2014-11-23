@@ -13,30 +13,40 @@
     <div class="item item-divider">
       Channels
     </div>
-    <a data-ng-repeat="item in results['channel']" class="item item-thumbnail-left" data-ng-click="searchChannel(item.id)">
-      <img data-ng-src="{{ item.thumbnail }}">
-      <h2>{{item.title}}</h2>
-      <p>{{item.author}}</p>
-      <p>{{item.description}}</p>
+      <a data-ng-repeat="item in results['channel']" class="item item-thumbnail-left"
+         data-ng-click="searchChannel(item.id.channelId)">
+        <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
+
+        <h2>{{item.snippet.title}}</h2>
+
+        <p>{{item.snippet.channelTitle}}</p>
+
+        <p>{{item.snippet.description}}</p>
     </a>
     <div class="item item-divider">
       Playlists
     </div>
     <a data-ng-repeat="item in results['playlist']" class="item item-thumbnail-left" data-ng-click="launch(video.id, video.title)">
-      <img data-ng-src="{{ item.thumbnail }}">
-      <h2>{{item.title}}</h2>
-      <p>{{item.author}}</p>
-      <p>{{item.description}}</p>
+      <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
+
+      <h2>{{item.snippet.title}}</h2>
+
+      <p>{{item.snippet.channelTitle}}</p>
+
+      <p>{{item.snippet.description}}</p>
     </a>
     <div class="item item-divider">
       Videos
     </div>
       <a data-ng-repeat="item in results['video']" class="item item-thumbnail-left"
          ng-click="launch(item.id, item.title)">
-        <img ng-src="{{ item.thumbnail }}">
-      <h2>{{item.title}}</h2>
-      <p>{{item.author}}</p>
-      <p>{{item.description}}</p>
+        <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
+
+        <h2>{{item.snippet.title}}</h2>
+
+        <p>{{item.snippet.channelTitle}}</p>
+
+        <p>{{item.snippet.description}}</p>
     </a>
     </ion-list>
     <button ng-click="test()" class="button button-clear">Cancel</button>

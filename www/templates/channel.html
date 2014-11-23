@@ -1,89 +1,78 @@
-<ion-modal-view ng-controller="BookmarkCtrl">
+<ion-modal-view ng-controller="ChannelCtrl">
     <ion-header-bar align-title="center" class="bar-light">
         <div class="buttons">
             <button class="button button-icon icon black">Edit</button>
         </div>
-        <h1 class="title newPalm">Bookmarked</h1>
-
+        <h1 class="title newPalm">{{details.channel[0].title}}</h1>
         <div class="buttons">
-            <button ng-click="closeModal('bookmark')" class="button button-icon icon">Cancel</button>
+            <button ng-click="closeModal('channel')" class="button button-icon icon">Cancel</button>
         </div>
     </ion-header-bar>
-    <style>
-        .tab-large-add, .tab-large-remove {
-            -webkit-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-            -moz-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-            -o-transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-            transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
-        }
+    <ion-header-bar class="bar-subheader item tabs tabs-secondary" style="width:100%">
+        <a ng-click="tabTo(0)" class="tab-item">Channel</a>
+        <a ng-click="tabTo(1)" class="tab-item">Videos</a>
+        <a ng-click="tabTo(2)" class="tab-item">Playlists</a>
+        <a ng-click="tabTo(3)" class="tab-item">Featured</a>
+    </ion-header-bar>
+    <!-------------------------------------------------------------------------------->
+    <ion-content style="top:92px" ng-show="tab==0">
+        <img ng-src="{{details.channel[0].brandingSettings.image.bannerImageUrl}}">
 
-        .tab-large, .tab-large-add.tab-large-add-active {
-            width: 80%;
-        }
+        <div class="list card">
+            <div class="item item-body">
+                <img ng-src="{{details.channel[0].thumbnails.default.url}}" style="float:left; margin-right:10px">
 
-        .tab-small {
-            width: 10%;
-        }
+                <p style="margin-top:0px">{{details.channel[0].description}}</p>
 
-        .tab-video, .tab-channel, .tab-playlist {
-            float: left;
-            overflow: hidden;
-            margin-top: 40px;
-        }
+                <p>
+                    <a href="#" class="subdued">1 Like</a>
+                    <a href="#" class="subdued">5 Comments</a>
+                </p>
+            </div>
+            <div class="item tabs tabs-secondary tabs-icon-left">
+                <a class="tab-item" href="#">
+                    <i class="icon ion-thumbsup"></i>
+                    Like
+                </a>
+                <a class="tab-item" href="#">
+                    <i class="icon ion-chatbox"></i>
+                    Comment
+                </a>
+                <a class="tab-item" href="#">
+                    <i class="icon ion-share"></i>
+                    Share
+                </a>
+            </div>
+        </div>
+    </ion-content>
+    <!-------------------------------------------------------------------------------->
+    <ion-content style="top:92px" ng-show="tab==1">
+        <ion-list>
+            <a data-ng-repeat="item in details.channel[0].video" class="item item-thumbnail-left"
+               data-ng-click="searchChannel(item.id)">
+                <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
 
-        .tab-video h1, .tab-channel h1, .tab-playlist h1 {
-            font-family: "Ubuntu";
-            margin-left: 5px;
-            margin-bottom: 0px;
-            white-space: nowrap;
-        }
+                <h2>{{item.snippet.title}}</h2>
 
-        .tab-video {
-            background-color: blue;
-        }
+                <p>{{item.snippet.channelTitle}}</p>
 
-        .tab-channel {
-            background-color: red;
-        }
-
-        .tab-playlist {
-            background-color: black;
-
-        }
-    </style>
-    <div class="row">
-        <div ng-click="tabTo(0)" ng-class="tab[0].style" class="tab-video"><h1>Videos</h1></div>
-        <div ng-click="tabTo(1)" ng-class="tab[1].style" class="tab-channel"><h1>Channels</h1></div>
-        <div ng-click="tabTo(2)" ng-class="tab[2].style" class="tab-playlist"><h1>Playlists</h1></div>
-    </div>
-    <ion-content style="margin-top:45px">
-        <div ng-show="tab[0].show" class="list" style="float:left; width:98%">
-
-            <a class="item item-thumbnail-left" href="#">
-                <img src="cover.jpg">
-
-                <h2>Pretty Hate Machine</h2>
-
-                <p>Nine Inch Nails</p>
+                <p>{{item.snippet.description}}</p>
             </a>
-        </div>
-        <div ng-show="tab[1].show" class="list card" style="float:left; width:98%">
-            <div class="item item-avatar">
-                <img src="avatar.jpg">
+        </ion-list>
+    </ion-content>
+    <!-------------------------------------------------------------------------------->
+    <ion-content style="top:92px" ng-show="tab==2">
+        <ion-list>
+            <a data-ng-repeat="item in details.channel[0].brandingSettings.featuredChannelsUrls"
+               class="item item-thumbnail-left" data-ng-click="searchChannel(item.id)">
+                <img data-ng-src="{{item.snippet.thumbnails.default.url}}">
 
-                <h2>Pretty Hate Machine</h2>
+                <h2>{{item}}</h2>
 
-                <p>Nine Inch Nails</p>
-            </div>
-        </div>
-        <div ng-show="tab[2].show" class="list card" style="float:left; width:98%">
-            <div class="item item-avatar">
-                <img src="avatar.jpg">
+                <p>{{item.snippet.channelTitle}}</p>
 
-                <h2>Pretty Hate Machine</h2>
-
-                <p>Nine Inch Nails</p>
-            </div>
-        </div>
+                <p>{{item.snippet.description}}</p>
+            </a>
+        </ion-list>
     </ion-content>
 </ion-modal-view>
