@@ -5,6 +5,7 @@ html {
 body {
     height: 100%;
     background: #fff;
+    cursor: url('../img/finger.png'), auto;
 }
 
 /*
@@ -93,57 +94,6 @@ Main Components
     font-size: 20px;
     font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
     color: #b4b9c0;
-}
-
-.noteCategory {
-    padding: 30px 20px;
-    text-align: center;
-    opacity: 1;
-    font-size: 12px;
-    width: 50%;
-    position: relative;
-    border: none;
-    background-clip: padding-box;
-    color: rgba(255, 255, 255, 0.6);
-    font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
-}
-
-.noteCategory i {
-    display: block;
-    font-size: 64px;
-    color: rgba(0, 0, 0, 0.25);
-}
-
-.noteCategory.activated {
-    opacity: 1;
-}
-
-.noteCategory.activated i {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.noteCategory.textType {
-    background: rgba(93, 156, 236, 0.7);
-}
-
-.noteCategory.addressType {
-    background: rgba(74, 137, 220, 0.7);
-}
-
-.noteCategory.linkType {
-    background: rgba(237, 85, 101, 0.7);
-}
-
-.noteCategory.passwordType {
-    background: rgba(218, 68, 83, 0.7);
-}
-
-.noteCategory.phoneType {
-    background: rgba(72, 207, 173, 0.7);
-}
-
-.noteCategory.emailType {
-    background: rgba(55, 188, 155, 0.7);
 }
 
 .typeSliderContainer .typeSlider {
@@ -636,61 +586,6 @@ Main Components
     min-height: 100%;
 }
 
-.loginButtons {
-    position: fixed;
-    padding: 10px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 12;
-}
-
-.loginButtons p {
-    font-size: 11px;
-    text-align: center;
-}
-
-.loginButtons button {
-    background: rgba(237, 85, 101, 0.6);
-    padding: 10px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 320px;
-    display: table;
-    margin: 10px auto;
-    border: none;
-    text-align: left;
-    font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
-    color: #fff;
-    border-radius: 3px;
-}
-
-.loginButtons button.activated {
-    background: rgba(237, 85, 101, 0.8);
-}
-
-.loginButtons button i {
-    font-size: 30px;
-}
-
-.loginButtons .continueButton {
-    background: rgba(72, 207, 173, 0.6);
-    color: #fff;
-}
-
-.loginButtons .continueButton.activated {
-    background: rgba(72, 207, 173, 0.8);
-}
-
-.loginButtons .termsButton {
-    background: rgba(72, 207, 173, 0.6);
-    color: #fff;
-}
-
-.loginButtons .termsButton.activated {
-    background: rgba(72, 207, 173, 0.8);
-}
-
 .settingsPage {
     background: #656D78;
     text-align: center;
@@ -884,18 +779,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 /*
 Shared classes
 */
-.Blue {
-    background: rgba(93, 156, 236, 0.6);
-}
-
-.Red {
-    background: rgba(237, 85, 101, 0.6);
-}
-
-.Green {
-    background: rgba(72, 207, 173, 0.6);
-}
-
 .actionsBar {
     padding: 10px;
 }
@@ -941,48 +824,6 @@ Shared classes
     color: rgba(255, 255, 255, 0.7);
 }
 
-::-webkit-input-placeholder {
-    color: #CCD1D9 !important;
-}
-
-:-moz-placeholder {
-    /* Firefox 18- */
-    color: #CCD1D9 !important;
-}
-
-::-moz-placeholder {
-    /* Firefox 19+ */
-    color: #ccd1d9 !important;
-}
-
-:-ms-input-placeholder {
-    color: #CCD1D9 !important;
-}
-
-.textType {
-    background: rgba(93, 156, 236, 0.7);
-}
-
-.addressType {
-    background: rgba(74, 137, 220, 0.7);
-}
-
-.linkType {
-    background: rgba(237, 85, 101, 0.7);
-}
-
-.passwordType {
-    background: rgba(218, 68, 83, 0.7);
-}
-
-.phoneType {
-    background: rgba(72, 207, 173, 0.7);
-}
-
-.emailType {
-    background: rgba(55, 188, 155, 0.7);
-}
-
 .submitButton {
     padding: 20px 20px;
     color: #AAB2BD;
@@ -1009,40 +850,10 @@ Shared classes
     font-size: 12px;
 }
 
-.googleLogin {
-    border: none;
-    padding: 20px;
-    border-radius: 3px;
-    text-align: center;
-    width: 100%;
-}
-
-.fbLogin {
-    border: none;
-    padding: 20px;
-    border-radius: 3px;
-    text-align: center;
-    width: 100%;
-    background: rgba(93, 156, 236, 0.6) !important;
-}
-
-.fbLogin.activated {
-    background: rgba(93, 156, 236, 0.8) !important;
-}
-
-.userPic {
-    border-radius: 50%;
-    max-width: 150px;
-    margin-bottom: 10px;
-}
-
 .scrollAble {
     overflow-y: scroll;
 }
 
-.angular-google-map-container {
-    height: 400px;
-}
 
 .verticalCenterContainer {
     position: relative;
@@ -1101,4 +912,27 @@ i {
 }
 h2 {
     font-family: "Ubuntu";
+}
+
+.js-video {
+    height: 0;
+    padding-bottom: 67.5%;
+    position: relative;
+    overflow: hidden;
+}
+
+.js-video.widescreen {
+    padding-bottom: 56.25%;
+}
+
+.js-video.vimeo {
+    padding-top: 0;
+}
+
+.js-video embed, .js-video iframe, .js-video object, .js-video video {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
 }

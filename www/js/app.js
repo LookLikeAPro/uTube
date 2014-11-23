@@ -1,3 +1,15 @@
+//Youtube KEY
+var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
+
+//=============================Functions==============================
+var httpGet = function (URL) {
+    var xmlHttp = null;
+    xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("GET", URL, false);
+    xmlHttp.send(null);
+    return JSON.parse(xmlHttp.responseText);
+}
+
 /*
  Initialization
  */
@@ -44,7 +56,7 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
 /*
  Services
  */
-app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localstorage', function ($window, $rootScope, $log, $localstorage, $http) {
+app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$localstorage', function ($window, $rootScope, $q, $localstorage, $http) {
     var service = this;
     var youtube = {
         ready: false,
@@ -53,11 +65,13 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         videoId: null,
         videoTitle: null,
         playerHeight: '480',
-        playerWidth: '640',
+        playerWidth: '720',
         state: 'stopped'
     };
     var results = {channel: [], playlist: [], video: []};
+    var details = {channel: [{}], playlist: [], video: []};
     var upcoming = [
+        {id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'},
         {id: 'kRJuY6ZDLPo', title: 'La Roux - In for the Kill (Twelves Remix)'},
         {id: '45YSGFctLws', title: 'Shout Out Louds - Illusions'},
         {id: 'ktoaj1IpTbw', title: 'CHVRCHES - Gun'},
@@ -66,12 +80,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         {id: 'sEwM6ERq0gc', title: 'HAIM - Forever (Official Music Video)'},
         {id: 'fTK4XTvZWmk', title: 'Housse De Racket â˜â˜€â˜ Apocalypso'}
     ];
-    var history = [
-        {id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'}
-    ];
 
     $window.onYouTubeIframeAPIReady = function () {
-        $log.info('Youtube API is ready');
+        console.log('Youtube API is ready');
         youtube.ready = true;
         service.bindPlayer('placeholder');
         service.loadPlayer();
@@ -79,10 +90,10 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
     };
 
     function onYoutubeReady(event) {
-        $log.info('YouTube Player is ready');
-        youtube.player.cueVideoById(history[0].id);
-        youtube.videoId = history[0].id;
-        youtube.videoTitle = history[0].title;
+        console.log('YouTube Player is ready');
+        youtube.player.cueVideoById(upcoming[0].id);
+        youtube.videoId = upcoming[0].id;
+        youtube.videoTitle = upcoming[0].title;
     }
 
     function onYoutubeStateChange(event) {
@@ -93,19 +104,18 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         } else if (event.data == YT.PlayerState.ENDED) {
             youtube.state = 'ended';
             service.launchPlayer(upcoming[0].id, upcoming[0].title);
-            service.archiveVideo(upcoming[0].id, upcoming[0].title);
             service.deleteVideo(upcoming, upcoming[0].id);
         }
         $rootScope.$apply();
     }
 
     this.bindPlayer = function (elementId) {
-        $log.info('Binding to ' + elementId);
+        console.log('Binding to ' + elementId);
         youtube.playerId = elementId;
     };
 
     this.createPlayer = function () {
-        $log.info('Creating a new Youtube player for DOM id ' + youtube.playerId + ' and video ' + youtube.videoId);
+        console.log('Creating a new Youtube player for DOM id ' + youtube.playerId + ' and video ' + youtube.videoId);
         return new YT.Player(youtube.playerId, {
             height: youtube.playerHeight,
             width: youtube.playerWidth,
@@ -136,8 +146,45 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
         return youtube;
     };
 
-    this.listResults = function (data, type) {
+
+    this.queueVideo = function (id, title) {
+        upcoming.push({
+            id: id,
+            title: title
+        });
+        return upcoming;
+    };
+
+
+    this.deleteVideo = function (list, id) {
+        for (var i = list.length - 1; i >= 0; i--) {
+            if (list[i].id === id) {
+                list.splice(i, 1);
+                break;
+            }
+        }
+    };
+
+    this.getYoutube = function () {
+        return youtube;
+    };
+
+    this.getResults = function () {
+        return results;
+    };
+
+    this.getUpcoming = function () {
+        return upcoming;
+    };
+    this.search = function (term, type, items, page) {
         results[type].length = 0;
+        data = httpGet('https://www.googleapis.com/youtube/v3/search' +
+        '?key=' + key +
+        '&type=' + type +
+        '&maxResults=' + items +
+        '&part=' + 'id,snippet' +
+        '&fields' + 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle' +
+        '&q=' + term);
         if (type == 'video') {
             for (var i = data.items.length - 1; i >= 0; i--) {
                 results[type].push({
@@ -172,66 +219,20 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http','$localst
             }
         }
         ;
-        return results[type];
-    }
-
-    this.queueVideo = function (id, title) {
-        upcoming.push({
-            id: id,
-            title: title
-        });
-        return upcoming;
+    };
+    this.get = function (id, type) {
+        data = httpGet('https://www.googleapis.com/youtube/v3/channels' +
+        '?key=' + key +
+        '&id=' + id +
+        '&part=' + 'snippet,statistics');
+        details.channel[0] = data.items[0].snippet; //title, description, publishedAt, thumbnails.default/medium/high
+        details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
     };
 
-    this.archiveVideo = function (id, title) {
-        history.unshift({
-            id: id,
-            title: title
-        });
-        return history;
-    };
-
-    this.deleteVideo = function (list, id) {
-        for (var i = list.length - 1; i >= 0; i--) {
-            if (list[i].id === id) {
-                list.splice(i, 1);
-                break;
-            }
-        }
-    };
-
-    this.getYoutube = function () {
-        return youtube;
-    };
-
-    this.getResults = function () {
-        return results;
-    };
-
-    this.getUpcoming = function () {
-        return upcoming;
-    };
-
-    this.getHistory = function () {
-        return history;
-    };
-    this.test = function(){
-        $http.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                type: 'channel',
-                maxResults: '2',
-                part: 'id,snippet',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                q: this.query
-            }
-        }).success(alert('test'))
-    };
 }]);
 
 
 app.run(function ($localstorage) {
-
     var tag = document.createElement('script');
     tag.src = "http://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -243,30 +244,22 @@ app.run(function ($localstorage) {
  */
 
 app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
-                                        $http, $sce, $ionicPopup, $ionicPopover, VideosService, $localstorage, $log) {
-$scope.test=function(){
-  VideosService.test();
-};
+                                        $http, $sce, $ionicPopup, $ionicPopover, VideosService) {
     init();
     function init() {
         $scope.youtube = VideosService.getYoutube();
         $scope.results = VideosService.getResults();
         $scope.upcoming = VideosService.getUpcoming();
-        $scope.history = VideosService.getHistory();
-        $scope.playlist = true;
     }
-
-
     $scope.launch = function (id, title) {
         VideosService.launchPlayer(id, title);
         VideosService.archiveVideo(id, title);
         $log.info('Launched id:' + id + ' and title:' + title);
+        $scope.closeSearchModal();
     };
 
     $scope.queue = function (id, title) {
         VideosService.queueVideo(id, title);
-        VideosService.deleteVideo($scope.history, id);
-        $log.info('Queued id:' + id + ' and title:' + title);
     };
 
     $scope.delete = function (list, id) {
@@ -282,10 +275,20 @@ $scope.test=function(){
         $scope.tab[id] = true;
     };
 
+    $scope.search = function () {
+        VideosService.search(this.query, 'channel', '2', '');
+        VideosService.search(this.query, 'playlist', '2', '');
+        VideosService.search(this.query, 'video', '8', '');
+    };
+    $scope.searchChannel = function (id) {
+        VideosService.get(id, 'channel');
+        $scope.openModal('channel');
+    };
+
     $scope.getVideoInfo = function (id) {
         $http.get('https://www.googleapis.com/youtube/v3/videos', {
             params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
+                key: key,
                 id: id,
                 part: 'snippet,statistics',
                 fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
@@ -333,95 +336,44 @@ $scope.test=function(){
     });
 
     //===============================Modals Control===================================
+    $scope.modal = {};
     $ionicModal.fromTemplateUrl('templates/search.html', {
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
-        $scope.searchModal = modal;
+        $scope.modal.search = modal;
     });
-    $scope.openSearchModal = function () {
-        $scope.searchModal.show();
-    };
-    $scope.closeSearchModal = function () {
-        $scope.searchModal.hide();
-    };
     $ionicModal.fromTemplateUrl('templates/bookmark.html', {
         scope: $scope,
         animation: 'slide-in-up'
     }).then(function (modal) {
-        $scope.bookmarkModal = modal;
+        $scope.modal.bookmark = modal;
     });
-    $scope.openBookmarkModal = function () {
-        $scope.bookmarkModal.show();
+    $ionicModal.fromTemplateUrl('templates/channel.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function (modal) {
+        $scope.modal.channel = modal;
+    });
+    $scope.openModal = function (id) {
+        $scope.modal[id].show();
     };
-    $scope.closeBookmarkModal = function () {
-        $scope.bookmarkModal.hide();
+    $scope.closeModal = function (id) {
+        $scope.modal[id].hide();
     };
+
 });
 
-app.controller('SearchCtrl', function ($scope, $http, $sce, VideosService) {
-    $scope.search = function () {
-        $http.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                type: 'video',
-                maxResults: '8',
-                part: 'id,snippet',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                q: this.query
-            }
-        })
-            .success(function (data) {
-                VideosService.listResults(data, 'video');
-            })
-            .error(function () {
-            });
-
-        $http.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                type: 'playlist',
-                maxResults: '2',
-                part: 'id,snippet',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                q: this.query
-            }
-        })
-            .success(function (data) {
-                VideosService.listResults(data, 'playlist');
-            })
-            .error(function () {
-            });
-        $http.get('https://www.googleapis.com/youtube/v3/search', {
-            params: {
-                key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                type: 'channel',
-                maxResults: '2',
-                part: 'id,snippet',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                q: this.query
-            }
-        })
-            .success(function (data) {
-                VideosService.listResults(data, 'channel');
-            })
-            .error(function () {
-            });
-    };
-    $scope.searchChannel = function (id) {
-        alert(id);
-        $http.get('https://www.googleapis.com/youtube/v3/channels', {
-                params: {
-                    key: 'AIzaSyA57XvCbZFEjA30XKLlEYBSVJGprGswIU4',
-                    id: id,
-                    part: 'id',
-                }
-        })
-            .success(function (data) {
-                alert(data);
-                $scope.closeBookmarkModal();
-            })
-            .error(function () {
-            });
-    };
+app.controller('BookmarkCtrl', function ($scope) {
+    //===============================Tabs Control===================================
+    $scope.tab = [
+        {style: 'tab-small', show: false},
+        {style: 'tab-large', show: true},
+        {style: 'tab-small', show: false}];
+    $scope.tabTo = function (tab) {
+        for (var i = 0; i < $scope.tab.length; i++) {
+            $scope.tab[i] = {style: 'tab-small', show: false};
+        }
+        $scope.tab[tab] = {style: 'tab-large', show: true};
+    }
 });

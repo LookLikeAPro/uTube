@@ -4,23 +4,18 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title>Palm Note</title>
+    <title>uTube</title>
     <!-- Google Fonts -->
-    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300'
-          rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400'
-          rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400' rel='stylesheet' type='text/css'>
     <!-- End of Google Fonts -->
     <!-- Ionic Javascript and Css -->
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <script src="lib/ionic/js/ionic.bundle.min.js"></script>
     <!-- End of Ionic Javascript and Css -->
-
     <!-- Css dependencies -->
     <link href="css/foundation-custom.css" rel="stylesheet">
     <link href="lib/animate.css/animate.min.css" rel="stylesheet">
     <!-- End of Css dependencies -->
-
     <!-- Main App Css -->
     <link href="css/app.css" rel="stylesheet">
     <!-- End of Main App Css -->
@@ -38,10 +33,9 @@
       <!-- Center content -->
       <ion-side-menu-content >
         <ion-header-bar align-title="left" class="bar-light topBar" id="eventPlaceholder">
-          <button class="button button-icon ion-ios7-search" ng-click="openSearchModal()">Search</button>
-          <h1 class="title"></h1>
-          <h1 class="title" style="align:center">{{youtube.videoTitle}}</h1>
-          <button class="button button-icon ion-ios7-bookmarks" ng-click="openBookmarkModal()"></button>
+          <button class="button button-icon ion-ios7-search" ng-click="openModal('search')">Search</button>
+
+          <button class="button button-icon ion-ios7-bookmarks" ng-click="openModal('bookmark')"></button>
         </ion-header-bar>
         <ion-nav-view animation="nav-title-slide-ios7"></ion-nav-view>
       </ion-side-menu-content>
@@ -52,18 +46,18 @@
           <h1 class="title" style="align:center">Upcoming</h1>
         </ion-header-bar>
         <ion-content class="sideMenuScroll">
-            <div class="list card" data-ng-repeat="video in upcoming" data-ng-class="{active: youtube.videoTitle == video.title}" data-ng-click="launch(video.id, video.title)" >
+          <div class="list card" data-ng-repeat="video in upcoming"
+               data-ng-class="{active: youtube.videoTitle == video.title}"
+               data-ng-click="launch(video.id, video.title)" style="margin:4px">
               <div class="item item-image">
-                <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
+                <i class="icon ion-image" style="font-size: 80px; vertical-align: middle;"></i>
               </div>
               <div class="item">
                 <h2 >{{video.title}}</h2>
-                <p>{{video.author}}</p>
               </div>
             </div>
           <div style="height:0.1px"></div>
           <button ng-click="updateUpcoming()" class="button button-clear">Update PLaylist in Scope</button>
-          <button ng-click="test()" class="button button-clear">Service HTTP</button>
         </ion-content>
       </ion-side-menu>
     </ion-side-menus>
