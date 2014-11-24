@@ -1,31 +1,17 @@
-
-<ion-content [has-bouncing="true" ] >
-
-  <div style="background:black; width:100%">
+<ion-content [has-bouncing="true" ] style="background:white">
+  <div style="background-color:black; width:100%">
     <div style="max-width:600px; min-width:300px; height:auto; margin:auto">
       <div class="js-video [vimeo, widescreen]">
         <div id="placeholder"></div>
       </div>
     </div>
   </div>
-
-  <div style="width:100%;height:49px; border-color: #cc2311;background-color: #ef4e3a; display: -webkit-box; display: -webkit-flex;display: -moz-box; display: -moz-flex; display: -ms-flexbox; display: flex; -webkit-box-direction: normal;-webkit-box-orient: horizontal;-webkit-flex-direction: horizontal;-moz-flex-direction: horizontal;-ms-flex-direction: horizontal;flex-direction: horizontal;-webkit-box-pack: center;-ms-flex-pack: center;-webkit-justify-content: center;-moz-justify-content: center;justify-content: center;-webkit-transform: translate3d(0, 0, 0);-moz-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);border-color: #b2b2b2;background-image: linear-gradient(0deg, #b2b2b2, #b2b2b2 50%, transparent 50%);bottom: 0;z-index: 5;background-size: 0;
-              line-height: 49px; ">
-    <a class="tab-item active" ng-click="tab(0)"
-       style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-      Description
-    </a>
-    <a class="tab-item active" ng-click="tab(1)"
-       style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-      Related
-    </a>
-    <a class="tab-item active" ng-click="tab(2)"
-       style="background-color: #fff; color: #ef4e3a; border-color: #cc2311;background-color: #ef4e3a;color: #fff; font-size: 100%;">
-      Comments
-    </a>
+  <div class="item tabs tabs-secondary">
+    <a class="tab-item">Description</a>
+    <a class="tab-item">Comments</a>
+    <a class="tab-item">Related</a>
   </div>
-  <ion-pane style="position:relative" ng-show="tab[0]">
-    <p>{{ youtube.videoTitle }}</p>
-  </ion-pane>
+  <div>
 
+  </div>
 </ion-content>

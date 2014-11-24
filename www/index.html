@@ -32,28 +32,29 @@
     <ion-side-menus>
       <!-- Center content -->
       <ion-side-menu-content >
-        <ion-header-bar align-title="left" class="bar-light topBar" id="eventPlaceholder">
+        <ion-header-bar align-title="left" class="bar-light topBar">
           <button class="button button-icon ion-ios7-search" ng-click="openModal('search')">Search</button>
-
           <button class="button button-icon ion-ios7-bookmarks" ng-click="openModal('bookmark')"></button>
         </ion-header-bar>
         <ion-nav-view animation="nav-title-slide-ios7"></ion-nav-view>
       </ion-side-menu-content>
 
       <!-- Left menu -->
-      <ion-side-menu side="left" expose-aside-when="large" class="sideMenuContainer" width="250">
+      <ion-side-menu side="left" expose-aside-when="large" class="sideMenuContainer" width="250" id="eventPlaceholder">
         <ion-header-bar class="bar-light sideBar">
+          <button class="button button-icon ion-ios7-albums"></button>
           <h1 class="title" style="align:center">Upcoming</h1>
         </ion-header-bar>
         <ion-content style="background-color:gray">
-          <div class="list card" data-ng-repeat="item in queue"
-               ng-class="{active: youtube.videoTitle == item.title}"
-               ng-click="launch(video.id, video.title)" style="margin:4px">
+          <div class="list card" data-ng-repeat="item in queue track by $index"
+               ng-class="{active: true}"
+               ng-click="launch(item.id)" style="margin:4px">
             <div style="width:100%; height:135px">
               <img ng-src="{{item.snippet.thumbnails.high.url}}" style="width:100%; height:182px; margin-top:-24px"/>
 
-              <div style="position:absolute; width:100%; height:28px;top:111px; opacity: 0.7;background-color:white">
-                <h2 style="margin-top:5px; margin-left:10px">{{item.snippet.title}}</h2>
+              <div style="position:absolute; width:100%; height:27px;top:111px; opacity: 0.7;background-color:white">
+                <h2 style="margin-top:5px; margin-left:10px; overflow:hidden;white-space: nowrap;">
+                  {{item.snippet.title}}</h2>
               </div>
               </div>
             </div>
@@ -62,6 +63,5 @@
       </ion-side-menu>
     </ion-side-menus>
   </body>
-
 </html>
 

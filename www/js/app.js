@@ -2,8 +2,8 @@
 var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
 //Global Variables
 var results = {channel: [], playlist: [], video: []};
-var details = {channel: [{}], playlist: [{}], video: []};
-var queue = [{id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'},];
+var details = {channel: [], playlist: [], video: [], related: []};
+var queue = [];
 
 //=============================Functions==============================
 var httpGet = function (URL) {
@@ -67,7 +67,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         state: 'stopped'
     };
 
-
     $window.onYouTubeIframeAPIReady = function () {
         console.log('Youtube API is ready');
         youtube.ready = true;
@@ -78,9 +77,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
 
     function onYoutubeReady(event) {
         console.log('YouTube Player is ready');
-        youtube.player.cueVideoById(queue[0].id);
         youtube.videoId = queue[0].id;
-        youtube.videoTitle = queue[0].title;
     }
 
     function onYoutubeStateChange(event) {
@@ -90,8 +87,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
             youtube.state = 'paused';
         } else if (event.data == YT.PlayerState.ENDED) {
             youtube.state = 'ended';
+            queue.splice(0, 1);
             service.launchPlayer(queue[0].id, queue[0].title);
-            service.deleteVideo(queue, queue[0].id);
         }
         $rootScope.$apply();
     }
@@ -130,25 +127,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         youtube.player.loadVideoById(id);
         youtube.videoId = id;
         return youtube;
-    };
-
-
-    this.queueVideo = function (id, title) {
-        queue.push({
-            id: id,
-            title: title
-        });
-        return queue;
-    };
-
-
-    this.deleteVideo = function (list, id) {
-        for (var i = list.length - 1; i >= 0; i--) {
-            if (list[i].id === id) {
-                list.splice(i, 1);
-                break;
-            }
-        }
     };
 
     this.getYoutube = function () {
@@ -209,8 +187,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '&id=' + id +
         '&part=' + 'snippet');
         details.playlist[0] = data.items[0].snippet;
-        if (details.playlist[0].title.length > 40)
-            details.playlist[0].title = details.playlist[0].title.substr(0, 40) + '...';
+        //if (details.playlist[0].title.length > 40)
+        //    details.playlist[0].title = details.playlist[0].title.substr(0, 40) + '...';
         console.log(JSON.stringify(details.playlist[0]));
         service.getPlaylistVideo(id);
     };
@@ -231,6 +209,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         details.video[0] = data;
         console.log(JSON.stringify(details.video[0]));
     };
+    this.getVideoRelated = function (id) {
+        //https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=5rOiW_xY-kc&type=video&key={YOUR_API_KEY}
+    }
 }]);
 
 app.run(function ($localstorage) {
@@ -293,20 +274,12 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     //========================Gesture Control (Bookmark modal)=======================
     $scope.lastEventCalled = 'Try to Drag the content up, down, left or rigth';
     var element = angular.element(document.querySelector('#eventPlaceholder'));
-    var events = [{
-        event: 'dragup',
-        text: 'You dragged me UP!'
-    },{
-        event: 'dragdown',
-        text: 'You dragged me Down!'
-    },{
+    var events = [
+        {
         event: 'dragleft',
         text: 'You dragged me Left!'
     },{
         event: 'dragright',
-        text: 'You dragged me Right!'
-    },{
-        event: 'tap',
         text: 'You dragged me Right!'
     }];
 
@@ -314,6 +287,7 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $ionicGesture.on(obj.event, function (event) {
             $scope.$apply(function () {
                 $scope.lastEventCalled = obj.text;
+                alert($scope.lastEventCalled);
             });
         }, element);
     });
