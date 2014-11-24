@@ -2,8 +2,7 @@
 var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
 //Global Variables
 var results = {channel: [], playlist: [], video: []};
-var details = {channel: [{}], playlist: [], video: []};
-
+var details = {channel: [{}], playlist: [{}], video: []};
 
 //=============================Functions==============================
 var httpGet = function (URL) {
@@ -13,7 +12,6 @@ var httpGet = function (URL) {
     xmlHttp.send(null);
     return JSON.parse(xmlHttp.responseText);
 }
-
 
 /*
  Initialization
@@ -142,10 +140,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         }
     };
 
-    this.launchPlayer = function (id, title) {
+    this.launchPlayer = function (id) {
         youtube.player.loadVideoById(id);
         youtube.videoId = id;
-        youtube.videoTitle = title;
         return youtube;
     };
 
@@ -183,7 +180,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '&type=' + type +
         '&maxResults=' + items +
         '&part=' + 'id,snippet' +
-        '&fields' + 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle' +
         '&q=' + term);
         results[type] = data.items;
     };
@@ -224,10 +220,33 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '?key=' + key +
         '&id=' + id +
         '&part=' + 'snippet').items;
-        console.log(details.channel[0].featured);
+    };
+    this.getPlaylistInfo = function (id) {
+        data = httpGet('https://www.googleapis.com/youtube/v3/playlists' +
+        '?key=' + key +
+        '&id=' + id +
+        '&part=' + 'snippet');
+        details.playlist[0] = data.items[0].snippet;
+        service.getPlaylistVideo(id);
+    };
+    this.getPlaylistVideo = function (id) {
+        data = httpGet('https://www.googleapis.com/youtube/v3/playlistItems' +
+        '?key=' + key +
+        '&playlistId=' + id +
+        '&maxResults=' + '10' +
+        '&part=' + 'id,snippet' +
+        '&order=' + 'date');
+        details.playlist[0].video = data.items;
+    };
+    this.getVideoInfo = function (id) {
+        data = httpGet('https://www.googleapis.com/youtube/v3/videos' +
+        '?key=' + key +
+        '&id=' + id +
+        '&part=' + 'id,contentDetails');
+        details.video[0] = data;
+        console.log(JSON.stringify(details.video[0]));
     };
 }]);
-
 
 app.run(function ($localstorage) {
     var tag = document.createElement('script');
@@ -239,7 +258,6 @@ app.run(function ($localstorage) {
 /*
  Controllers
  */
-
 app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
                                         $http, $sce, $ionicPopup, $ionicPopover, VideosService) {
     init();
@@ -249,11 +267,10 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $scope.details = details;
         $scope.upcoming = VideosService.getUpcoming();
     }
-    $scope.launch = function (id, title) {
-        VideosService.launchPlayer(id, title);
-        VideosService.archiveVideo(id, title);
-        $log.info('Launched id:' + id + ' and title:' + title);
-        $scope.closeSearchModal();
+
+    $scope.launch = function (id) {
+        VideosService.launchPlayer(id);
+        $scope.closeModal('search');
     };
 
     $scope.queue = function (id, title) {
@@ -271,7 +288,9 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         }
         $scope.tab[id] = true;
     };
-
+    $scope.test = function () {
+        VideosService.getVideoInfo(results.video[0].videoId);
+    };
     $scope.search = function () {
         VideosService.search(this.query, 'channel', '2', '');
         VideosService.search(this.query, 'playlist', '2', '');
@@ -281,21 +300,9 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         VideosService.getChannelInfo(id);
         $scope.openModal('channel');
     };
-
-    $scope.getVideoInfo = function (id) {
-        $http.get('https://www.googleapis.com/youtube/v3/videos', {
-            params: {
-                key: key,
-                id: id,
-                part: 'snippet,statistics',
-                fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-            }
-        })
-            .success(function (data) {
-                return data;
-            })
-            .error(function () {
-            });
+    $scope.searchPlaylist = function (id) {
+        VideosService.getPlaylistInfo(id);
+        $scope.openModal('playlist');
     };
 
     $scope.updateUpcoming = function (){

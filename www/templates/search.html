@@ -9,29 +9,30 @@
     <button ng-click="closeModal('search')" class="button button-clear">Cancel</button>
   </ion-header-bar>
   <ion-content>
-    <ion-list>
+    <ion-list can-swipe="listCanSwipe">
       <div class="item item-divider">Channels</div>
-      <a ng-repeat="item in results['channel']" class="item item-thumbnail-left"
+      <ion-item ng-repeat="item in results['channel']" class="item-thumbnail-left"
          ng-click="searchChannel(item.id.channelId)">
         <img data-ng-src="{{item.snippet.thumbnails.default.url}}"/>
         <h2>{{item.snippet.title}}</h2>
         <p>{{item.snippet.description}}</p>
-    </a>
+      </ion-item>
       <div class="item item-divider">Playlists</div>
-      <a ng-repeat="item in results['playlist']" class="item item-thumbnail-left"
+      <ion-item ng-repeat="item in results['playlist']" class="item-thumbnail-left"
          ng-click="searchPlaylist(item.id.playlistId)">
         <img data-ng-src="{{item.snippet.thumbnails.default.url}}"/>
       <h2>{{item.snippet.title}}</h2>
       <p>{{item.snippet.description}}</p>
-    </a>
+      </ion-item>
       <div class="item item-divider">Videos</div>
-      <a data-ng-repeat="item in results['video']" class="item item-thumbnail-left"
-         ng-click="launch(item.id, item.title)">
+      <ion-item data-ng-repeat="item in results['video']" class="item-thumbnail-left"
+                ng-click="launch(item.id)">
         <img style="margin-top:6px" data-ng-src="{{item.snippet.thumbnails.default.url}}"/>
         <h2 style="margin-bottom:0">{{item.snippet.title}}</h2>
         <p style="margin-top:0; margin-bottom:0">{{item.snippet.channelTitle}}</p>
         <p style="margin-top:0">{{item.snippet.description}}</p>
-    </a>
+        <ion-option-button class="button-positive">Share</ion-option-button>
+      </ion-item>
     </ion-list>
     <button ng-click="test()" class="button button-clear">Cancel</button>
   </ion-content>
