@@ -8,49 +8,34 @@
             <button ng-click="closeModal('playlist')" class="button button-icon icon">Cancel</button>
         </div>
     </ion-header-bar>
-    <ion-header-bar class="bar-subheader item tabs tabs-secondary" style="width:100%">
-        <a ng-click="tabTo(0)" class="tab-item">Channel</a>
-        <a ng-click="tabTo(1)" class="tab-item">Videos</a>
-    </ion-header-bar>
     <!-------------------------------------------------------------------------------->
-    <ion-content style="top:92px" ng-show="tab==0">
-        <img ng-src="{{details.channel[0].brandingSettings.image.bannerImageUrl}}">
-
-        <div class="list card">
-            <div class="item item-body">
-                <img ng-src="{{details.channel[0].thumbnails.default.url}}" style="float:left; margin-right:10px">
-                <p style="margin-top:0px">{{details.channel[0].description}}</p>
-                <p>
-                    <a href="#" class="subdued">1 Like</a>
-                    <a href="#" class="subdued">5 Comments</a>
-                </p>
-            </div>
-            <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item" href="#">
-                    <i class="icon ion-thumbsup"></i>
-                    Like
-                </a>
-                <a class="tab-item" href="#">
-                    <i class="icon ion-chatbox"></i>
-                    Comment
-                </a>
-                <a class="tab-item" href="#">
-                    <i class="icon ion-share"></i>
-                    Share
-                </a>
-            </div>
+    <ion-content>
+        <div style="width:100%; height:140px; overflow:hidden; background-color:black">
+            <img ng-src="{{details.playlist[0].thumbnails.high.url}}"
+                 style="height: 340px;width:100%; margin:-90px auto auto 0">
         </div>
-    </ion-content>
-    <!-------------------------------------------------------------------------------->
-    <ion-content style="top:92px">
+        <div class="item tabs tabs-secondary tabs-icon-left">
+            <a class="tab-item" href="#">
+                <i class="icon ion-ios7-play"></i>
+                Play
+            </a>
+            <a class="tab-item" href="#">
+                <i class="icon ion-ios7-bookmarks"></i>
+                Bookmark
+            </a>
+            <a class="tab-item" href="#">
+                <i class="icon ion-share"></i>
+                Share
+            </a>
+        </div>
         <ion-list>
-            <a ng-repeat="item in details.playlist[0].video" class="item item-thumbnail-left"
+            <ion-item ng-repeat="item in details.playlist[0].video" class="item item-thumbnail-left"
                ng-click="launch(item.id, item.title)">
-                <img style="margin-top:6px" data-ng-src="{{item.snippet.thumbnails.default.url}}">
+                <img style="margin-top:6px" ng-src="{{item.snippet.thumbnails.default.url}}">
                 <h2 style="margin-bottom:0">{{item.snippet.title}}</h2>
                 <p style="margin-top:0; margin-bottom:0">{{item.snippet.channelTitle}}</p>
                 <p style="margin-top:0">{{item.snippet.description}}</p>
-            </a>
+            </ion-item>
         </ion-list>
     </ion-content>
 </ion-modal-view>

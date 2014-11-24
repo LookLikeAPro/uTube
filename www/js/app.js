@@ -3,6 +3,7 @@ var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
 //Global Variables
 var results = {channel: [], playlist: [], video: []};
 var details = {channel: [{}], playlist: [{}], video: []};
+var queue = [{id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'},];
 
 //=============================Functions==============================
 var httpGet = function (URL) {
@@ -13,9 +14,6 @@ var httpGet = function (URL) {
     return JSON.parse(xmlHttp.responseText);
 }
 
-/*
- Initialization
- */
 angular.module('ionic.utils', [])
     .factory('$localstorage', ['$window', function ($window) {
         return {
@@ -33,7 +31,6 @@ angular.module('ionic.utils', [])
             }
         }
     }]);
-// Initializing the AngularJs app
 var app = angular.module('App', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils']);
 /*
  Routing
@@ -71,17 +68,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
     };
 
 
-    var upcoming = [
-        {id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'},
-        {id: 'kRJuY6ZDLPo', title: 'La Roux - In for the Kill (Twelves Remix)'},
-        {id: '45YSGFctLws', title: 'Shout Out Louds - Illusions'},
-        {id: 'ktoaj1IpTbw', title: 'CHVRCHES - Gun'},
-        {id: '8Zh0tY2NfLs', title: 'N.E.R.D. ft. Nelly Furtado - Hot N\' Fun (Boys Noize Remix) HQ'},
-        {id: 'zwJPcRtbzDk', title: 'Daft Punk - Human After All (SebastiAn Remix)'},
-        {id: 'sEwM6ERq0gc', title: 'HAIM - Forever (Official Music Video)'},
-        {id: 'fTK4XTvZWmk', title: 'Housse De Racket â˜â˜€â˜ Apocalypso'}
-    ];
-
     $window.onYouTubeIframeAPIReady = function () {
         console.log('Youtube API is ready');
         youtube.ready = true;
@@ -92,9 +78,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
 
     function onYoutubeReady(event) {
         console.log('YouTube Player is ready');
-        youtube.player.cueVideoById(upcoming[0].id);
-        youtube.videoId = upcoming[0].id;
-        youtube.videoTitle = upcoming[0].title;
+        youtube.player.cueVideoById(queue[0].id);
+        youtube.videoId = queue[0].id;
+        youtube.videoTitle = queue[0].title;
     }
 
     function onYoutubeStateChange(event) {
@@ -104,8 +90,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
             youtube.state = 'paused';
         } else if (event.data == YT.PlayerState.ENDED) {
             youtube.state = 'ended';
-            service.launchPlayer(upcoming[0].id, upcoming[0].title);
-            service.deleteVideo(upcoming, upcoming[0].id);
+            service.launchPlayer(queue[0].id, queue[0].title);
+            service.deleteVideo(queue, queue[0].id);
         }
         $rootScope.$apply();
     }
@@ -148,11 +134,11 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
 
 
     this.queueVideo = function (id, title) {
-        upcoming.push({
+        queue.push({
             id: id,
             title: title
         });
-        return upcoming;
+        return queue;
     };
 
 
@@ -169,10 +155,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         return youtube;
     };
 
-
-    this.getUpcoming = function () {
-        return upcoming;
-    };
     this.search = function (term, type, items, page) {
         results[type].length = 0;
         data = httpGet('https://www.googleapis.com/youtube/v3/search' +
@@ -227,6 +209,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         '&id=' + id +
         '&part=' + 'snippet');
         details.playlist[0] = data.items[0].snippet;
+        if (details.playlist[0].title.length > 40)
+            details.playlist[0].title = details.playlist[0].title.substr(0, 40) + '...';
+        console.log(JSON.stringify(details.playlist[0]));
         service.getPlaylistVideo(id);
     };
     this.getPlaylistVideo = function (id) {
@@ -265,16 +250,12 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $scope.youtube = VideosService.getYoutube();
         $scope.results = results;
         $scope.details = details;
-        $scope.upcoming = VideosService.getUpcoming();
+        $scope.queue = queue;
     }
 
     $scope.launch = function (id) {
         VideosService.launchPlayer(id);
         $scope.closeModal('search');
-    };
-
-    $scope.queue = function (id, title) {
-        VideosService.queueVideo(id, title);
     };
 
     $scope.delete = function (list, id) {
@@ -305,11 +286,9 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $scope.openModal('playlist');
     };
 
-    $scope.updateUpcoming = function (){
-      for (var i =0; i<$scope.upcoming.length;i++)
-      {
-          $scope.upcoming[i] = $scope.getVideoInfo($scope.upcoming[i].id);
-      }
+
+    $scope.queueAdd = function (item) {
+        queue.push(item);
     };
     //========================Gesture Control (Bookmark modal)=======================
     $scope.lastEventCalled = 'Try to Drag the content up, down, left or rigth';
