@@ -54,7 +54,8 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
 /*
  Services
  */
-app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$localstorage', function ($window, $rootScope, $q, $localstorage, $http) {
+app.service('VideosService', ['$window', '$rootScope', '$log', '$localstorage', '$sce',
+    function ($window, $rootScope, $q, $localstorage, $sce) {
     var service = this;
     var youtube = {
         ready: false,
@@ -205,12 +206,18 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$locals
         data = httpGet('https://www.googleapis.com/youtube/v3/videos' +
         '?key=' + key +
         '&id=' + id +
-        '&part=' + 'id,contentDetails');
-        details.video[0] = data;
-        console.log(JSON.stringify(details.video[0]));
+        '&part=' + 'id,snippet');
+        details.video[0] = data.items[0];
+        service.getVideoRelated(id);
+        return details.video[0];
     };
     this.getVideoRelated = function (id) {
-        //https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=5rOiW_xY-kc&type=video&key={YOUR_API_KEY}
+        data = httpGet('https://www.googleapis.com/youtube/v3/search' +
+        '?key=' + key +
+        '&relatedToVideoId=' + id +
+        '&part=' + 'id,snippet' +
+        '&type=' + 'video');
+        details.related = data.items;
     }
 }]);
 
@@ -225,7 +232,7 @@ app.run(function ($localstorage) {
  Controllers
  */
 app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
-                                        $http, $sce, $ionicPopup, $ionicPopover, VideosService) {
+                                        $http, $sce, $ionicPopup, VideosService) {
     init();
     function init() {
         $scope.youtube = VideosService.getYoutube();
@@ -237,6 +244,8 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     $scope.launch = function (id) {
         VideosService.launchPlayer(id);
         $scope.closeModal('search');
+        $scope.closeModal('bookmark');
+        $scope.closeModal('channel');
     };
 
     $scope.delete = function (list, id) {
@@ -267,10 +276,19 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $scope.openModal('playlist');
     };
 
-
-    $scope.queueAdd = function (item) {
-        queue.push(item);
+    $scope.queueAdd = function (id) {
+        queue.push(VideosService.getVideoInfo(id));
     };
+    $scope.queueGoTo = function (id) {
+        queue.unshift(VideosService.getVideoInfo(id));
+        $scope.launch(id);
+    };
+    //========================Video View Tabs======================================
+    $scope.tab = 0;
+    $scope.tabTo = function (id) {
+        $scope.tab = id;
+    }
+
     //========================Gesture Control (Bookmark modal)=======================
     $scope.lastEventCalled = 'Try to Drag the content up, down, left or rigth';
     var element = angular.element(document.querySelector('#eventPlaceholder'));
