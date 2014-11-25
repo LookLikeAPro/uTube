@@ -244,8 +244,8 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     $scope.launch = function (id) {
         VideosService.launchPlayer(id);
         $scope.closeModal('search');
-        $scope.closeModal('bookmark');
         $scope.closeModal('channel');
+        $scope.closeModal('bookmark');
     };
 
     $scope.delete = function (list, id) {
