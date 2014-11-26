@@ -10,6 +10,7 @@ var httpGet = function (URL) {
     var xmlHttp = null;
     xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", URL, false);
+    xmlHttp.setRequestHeader("Referer", "http://jerryzhou.net/utube/");
     xmlHttp.send(null);
     return JSON.parse(xmlHttp.responseText);
 }
@@ -74,6 +75,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$localstorage', 
         service.bindPlayer('placeholder');
         service.loadPlayer();
         $rootScope.$apply();
+        //<iframe width="640" height="360" src="http://www.youtube.com/embed/*********?feature=player_embedded" frameborder="0" allowfullscreen></iframe>
     };
 
     function onYoutubeReady(event) {

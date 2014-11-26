@@ -879,17 +879,14 @@ Media Queries
     .modal {
         border-radius: 3px;
     }
-
     .modal .bar-light {
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
     }
-
     .noteCategory {
         padding: 40px 20px;
         font-size: 1.5em;
     }
-
     .noteCategory i {
         font-size: 120px;
     }

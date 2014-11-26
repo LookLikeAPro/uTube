@@ -30,12 +30,15 @@
         </div>
         <ion-list>
             <ion-item ng-repeat="item in details.playlist[0].video" class="item item-thumbnail-left"
-               ng-click="launch(item.id, item.title)">
+                      ng-click="queueGoTo(item.id.videoId)">
                 <img ng-src="{{item.snippet.thumbnails.default.url}}">
-
                 <h2>{{item.snippet.title}}</h2>
-
                 <p>{{item.snippet.description}}</p>
+                <ion-option-button class="button-calm" ng-click="queueAdd(item.id.videoId)">Queue</ion-option-button>
+                <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Bookmark
+                </ion-option-button>
+                <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Share
+                </ion-option-button>
             </ion-item>
         </ion-list>
     </ion-content>
