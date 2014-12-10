@@ -229,11 +229,38 @@ app.run(function ($localstorage) {
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 });
 
+app.factory('service', function($q, $http, $templateCache) {
+    return {
+        getHistoricalData: function(symbol, start, end) {
+            var deferred = $q.defer();
+            var format = '&format=json&callback=JSON_CALLBACK';
+            var query = 'id=UxxajLWwzqY';
+            var url = 'http://ytapi.gitnol.com/get.php?' + query + format;
+            $http.jsonp(url)
+            .success(function(json) {
+                var quotes = json;
+                console.log(quotes);
+                deferred.resolve(quotes);
+            });
+            return deferred.promise;
+        }
+    };
+});
 /*
  Controllers
  */
 app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
-                                        $http, $sce, $ionicPopup, VideosService, video) {
+                                        $http, $sce, $ionicPopup, VideosService, video, $templateCache, service) {
+    $scope.getData = function() {
+
+        var promise = service.getHistoricalData($scope.symbol, $scope.startDate, $scope.endDate);
+
+        promise.then(function(data) {
+            $scope.items = data;
+        });
+    };
+    $scope.getData();
+
     init();
     function init() {
         $scope.youtube = VideosService.getYoutube();
@@ -243,6 +270,8 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     }
     $scope.launch = function (id) {
         VideosService.launchPlayer(id);
+
+
         $scope.closeModal('search');
         $scope.closeModal('channel');
         $scope.closeModal('bookmark');
@@ -251,14 +280,6 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
 
     $scope.delete = function (list, id) {
         VideosService.deleteVideo(list, id);
-    };
-
-    $scope.tab = [true, false, false];
-    $scope.tab = function (id) {
-        for (var i = 0; i < 3; i++) {
-            $scope.tab[i] = false;
-        }
-        $scope.tab[id] = true;
     };
     $scope.test = function () {
         VideosService.getVideoInfo(results.video[0].videoId);
@@ -288,6 +309,17 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     $scope.tab = 0;
     $scope.tabTo = function (id) {
         $scope.tab = id;
+      console.log ("why");
+      $http.jsonp({ url: 'http://ytapi.gitnol.com/get.php?callback=JSON_CALLBACK&id=UxxajLWwzqY', cache: $templateCache}).
+        success(function(data, status) {
+          $scope.status = status;
+          console.log(data);
+
+        }).
+        error(function(data, status) {
+          $scope.data = data || "Request failed";
+          $scope.status = status;
+      });
     }
 
     //========================Gesture Control (Bookmark modal)=======================
