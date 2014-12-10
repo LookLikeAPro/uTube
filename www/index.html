@@ -14,6 +14,7 @@
     <!-- Css dependencies -->
     <link href="css/foundation-custom.css" rel="stylesheet">
     <link href="lib/animate.css/animate.min.css" rel="stylesheet">
+    <link href="css/ngvideo.css" rel="stylesheet">
     <!-- End of Css dependencies -->
     <!-- Main App Css -->
     <link href="css/app.css" rel="stylesheet">
@@ -25,6 +26,20 @@
     <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <script src="cordova.js"></script>
     <!-- End of cordova script -->
+    <script type="text/javascript" src="lib/ngvideo/components/Service.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Bootstrap.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Buffer.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Controls.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/FullScreen.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/PlaybackRate.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Playlist.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Seekable.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Screen.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Feedback.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Meta.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Messages.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Timeline.js"></script>
+    <script type="text/javascript" src="lib/ngvideo/components/Volume.js"></script>
   </head>
 
   <body ng-app="App" ng-controller="ContentCtrl">
@@ -45,6 +60,7 @@
           <h1 class="title" style="align:center">Upcoming</h1>
         </ion-header-bar>
         <ion-content style="background-color:gray">
+
           <div class="list card" data-ng-repeat="item in queue track by $index"
                ng-class="{active: true}"
                ng-click="launch(item.id)" style="margin:4px">

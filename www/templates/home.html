@@ -1,4 +1,5 @@
 <ion-content [has-bouncing="true" ] style="background:white">
+
   <div style="background-color:black; width:100%">
     <div style="max-width:600px; min-width:300px; height:auto; margin:auto">
       <div class="js-video [vimeo, widescreen]">
@@ -6,6 +7,84 @@
       </div>
     </div>
   </div>
+  <section class="ng-video-container">
+    <!-- Base Directive -->
+    <section class="video" ng-video>
+      <!-- Screen Directive -->
+      <video vi-screen></video>
+      <section vi-controls class="controls">
+        <span vi-controls-play title="Play" class="glyphicon glyphicon-play"></span>
+        <span vi-controls-pause title="Pause" class="glyphicon glyphicon-pause"></span>
+      </section>
+      <!-- Full Screen Directive -->
+      <section class="full-screen">
+        <span title="Full Screen" vi-full-screen-toggle class="glyphicon glyphicon-fullscreen"></span>
+      </section>
+      <!-- Feedback Directive -->
+      <section vi-feedback class="feedback">
+        <span class="buffering" ng-show="buffering">Buffering...</span>
+        <section class="loading" ng-show="loading">
+          Loading...
+        </section>
+        <!-- Volume Directive -->
+        <section vi-volume class="volume">
+          <div class="scale">
+            <div class="bar" style="width: {{volume * 100}}%"></div>
+          </div>
+          <span vi-volume-decrease title="Decrease Volume" class="decrease glyphicon glyphicon-minus"></span>
+          <span vi-volume-increase title="Increase Volume" class="increase glyphicon glyphicon-plus"></span>
+        </section>
+        <!-- Duration Directive -->
+        <section class="duration">
+          {{currentTime | number: 2}}s of {{duration | number: 2}}s
+          [{{percentagePlayed | number: 0}}%]
+        </section>
+        <section class="title">ngVideo</section>
+        <!-- Timeline Directive -->
+        <section class="timeline">
+          <input vi-timeline />
+        </section>
+        <!-- Buffer Directive -->
+        <section vi-buffer class="buffer"></section>
+        <section class="generic">
+          V{{volume}}
+          <span vi-messages>M{{messages.length}}</span>
+          R{{playbackRate}}
+          P{{playing ? 1 : 0}}
+          L{{loading ? 1 : 0}}
+          B{{buffered}}%
+          <a href="https://github.com/Wildhoney/ngVideo" target="_blank">
+            GitHub.com/Wildhoney/ngVideo
+          </a>
+        </section>
+      </section>
+      <!-- Playlist Directive -->
+      <section vi-playlist class="playlist" ng-show="$parent.playlistOpen">
+        <ul>
+          <li class="title">
+            <span class="glyphicon glyphicon-facetime-video"></span> &nbsp;
+            Playlist
+            <div class="close-playlist"
+                 title="Close Playlist"
+                 ng-click="$parent.playlistOpen = !$parent.playlistOpen">
+              &times;
+            </div>
+          </li>
+          <li vi-playlist-video ng-repeat="video in videos" ng-model="video">
+<span vi-meta ng-model="video" class="meta">
+{{duration | number: 2}}s
+</span>
+            {{getVideoName(video)}}
+          </li>
+        </ul>
+      </section>
+<span title="Open Playlist"
+      ng-show="!playlistOpen"
+      ng-click="playlistOpen = !playlistOpen"
+      class="open-playlist glyphicon glyphicon-facetime-video">
+</span>
+    </section>
+  </section>
   <div class="item tabs tabs-secondary">
     <a ng-click="tabTo(0)" class="tab-item">Description</a>
     <a ng-click="tabTo(1)" class="tab-item">Comments</a>

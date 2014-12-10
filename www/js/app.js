@@ -15,6 +15,7 @@ var httpGet = function (URL) {
     return JSON.parse(xmlHttp.responseText);
 }
 
+
 angular.module('ionic.utils', [])
     .factory('$localstorage', ['$window', function ($window) {
         return {
@@ -32,11 +33,11 @@ angular.module('ionic.utils', [])
             }
         }
     }]);
-var app = angular.module('App', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils']);
+var app = angular.module('App', ['ionic', 'ngCordova', "ngSanitize", 'ionic.utils','ngVideo']);
 /*
  Routing
  */
-app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
+app.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('home', {
@@ -49,7 +50,6 @@ app.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         url: '/search',
         templateUrl: 'templates/search.html',
     });
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 });
 
 /*
@@ -64,9 +64,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$localstorage', 
         playerId: null,
         videoId: null,
         videoTitle: null,
-        playerHeight: '480',
-        playerWidth: '720',
-        state: 'stopped'
+        state: 'stopped',
     };
 
     $window.onYouTubeIframeAPIReady = function () {
@@ -104,11 +102,12 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$localstorage', 
     this.createPlayer = function () {
         console.log('Creating a new Youtube player for DOM id ' + youtube.playerId + ' and video ' + youtube.videoId);
         return new YT.Player(youtube.playerId, {
-            height: youtube.playerHeight,
-            width: youtube.playerWidth,
             playerVars: {
                 rel: 0,
-                showinfo: 0
+                showinfo: 0,
+                color: 'white',
+                rel:0,
+                theme:'light',
             },
             events: {
                 'onReady': onYoutubeReady,
@@ -220,8 +219,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$localstorage', 
         '&part=' + 'id,snippet' +
         '&type=' + 'video');
         details.related = data.items;
-    }
-}]);
+    };
+    }]);
 
 app.run(function ($localstorage) {
     var tag = document.createElement('script');
@@ -234,7 +233,7 @@ app.run(function ($localstorage) {
  Controllers
  */
 app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval, $ionicSideMenuDelegate, $ionicModal, $ionicSlideBoxDelegate,
-                                        $http, $sce, $ionicPopup, VideosService) {
+                                        $http, $sce, $ionicPopup, VideosService, video) {
     init();
     function init() {
         $scope.youtube = VideosService.getYoutube();
@@ -242,13 +241,13 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         $scope.details = details;
         $scope.queue = queue;
     }
-
     $scope.launch = function (id) {
         VideosService.launchPlayer(id);
         $scope.closeModal('search');
         $scope.closeModal('channel');
         $scope.closeModal('bookmark');
     };
+    video.addSource('mp4', 'http://www.html5rocks.com/en/tutorials/video/basics/devstories.mp4');
 
     $scope.delete = function (list, id) {
         VideosService.deleteVideo(list, id);
