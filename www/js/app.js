@@ -3,7 +3,10 @@ var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
 //Global Variables
 var results = {channel: [], playlist: [], video: []};
 var details = {channel: [], playlist: [], video: [], related: []};
-var queue = [];
+//var queue = [];
+//var quality = {22: "720p", 43: "480p", 18: "480p", 5:"360p", 36:"360p", 17:"240p"};
+//var maxQuality = "22";
+var preference = [43, 18, 5, 36, 17, 22];
 
 //=============================Functions==============================
 var httpGet = function (URL) {
@@ -150,8 +153,14 @@ app.service(
      this.launchPlayer = function (id) {
        var promise = web.get('http://jerryzhou.net:2000/http://ytapi.gitnol.com/get.php?apikey=03cedab1gdghtelxwd8d5272d1394d12&id='+id);
        promise.then(function(data) {
-         //console.log(data.link[18][0]);
-         video.addSource('mp4',data.link[18][0], true);
+         for (i=0; i<preference.length; i++)
+         {
+           if (data.link[preference[i]][0]!=null)
+           {
+             video.addSource('mp4',data.link[18][0], true);
+             break;
+           }
+         }
        }, function(reason) {
          alert('Failed: ' + reason);
        });
@@ -258,7 +267,7 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
   function init() {
     $scope.results = results;
     $scope.details = details;
-    $scope.queue = queue;
+    //$scope.queue = queue;
   }
   $scope.launch = function (id) {
     VideosService.launchPlayer(id);
@@ -285,14 +294,14 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
     VideosService.getPlaylistInfo(id);
     $scope.openModal('playlist');
   };
-
+  /*
   $scope.queueAdd = function (id) {
     queue.push(VideosService.getVideoInfo(id));
   };
   $scope.queueGoTo = function (id) {
     queue.unshift(VideosService.getVideoInfo(id));
     $scope.launch(id);
-  };
+  };*/
   //========================Video View Tabs======================================
   $scope.tab = 0;
   $scope.tabTo = function (id) {
@@ -300,6 +309,7 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
   }
 
   //========================Gesture Control (Bookmark modal)=======================
+  /*
   $scope.lastEventCalled = 'Try to Drag the content up, down, left or rigth';
   var element = angular.element(document.querySelector('#eventPlaceholder'));
   var events = [
@@ -318,7 +328,7 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
         alert($scope.lastEventCalled);
       });
     }, element);
-  });
+  });*/
 
   //===============================Modals Control===================================
   $scope.modal = {};

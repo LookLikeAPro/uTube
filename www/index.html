@@ -46,8 +46,12 @@
   </head>
 
   <body ng-app="App" ng-controller="ContentCtrl">
-    <ion-side-menus>
-      <!-- Center content -->
+      <ion-header-bar align-title="left" class="bar-light topBar">
+          <button class="button button-icon ion-ios7-search" ng-click="openModal('search')">Search</button>
+          <button class="button button-icon ion-ios7-bookmarks" ng-click="openModal('bookmark')"></button>
+        </ion-header-bar>
+        <ion-nav-view animation="nav-title-slide-ios7"></ion-nav-view>
+    <!--<ion-side-menus>
       <ion-side-menu-content >
         <ion-header-bar align-title="left" class="bar-light topBar">
           <button class="button button-icon ion-ios7-search" ng-click="openModal('search')">Search</button>
@@ -55,8 +59,6 @@
         </ion-header-bar>
         <ion-nav-view animation="nav-title-slide-ios7"></ion-nav-view>
       </ion-side-menu-content>
-
-      <!-- Left menu -->
       <ion-side-menu side="left" expose-aside-when="large" class="sideMenuContainer" width="250" id="eventPlaceholder">
         <ion-header-bar class="bar-light sideBar">
           <button class="button button-icon ion-ios7-albums"></button>
@@ -78,7 +80,7 @@
           <div style="height:0.1px"></div>
         </ion-content>
       </ion-side-menu>
-    </ion-side-menus>
+    </ion-side-menus>-->
   </body>
 </html>
 
