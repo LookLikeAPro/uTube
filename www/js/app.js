@@ -18,7 +18,6 @@ var httpGet = function (URL) {
   return JSON.parse(xmlHttp.responseText);
 }
 
-
 angular.module('ionic.utils', [])
 .factory('$localstorage', ['$window', function ($window) {
   return {
@@ -155,100 +154,138 @@ app.service(
        promise.then(function(data) {
          for (i=0; i<preference.length; i++)
          {
-           if (data.link[preference[i]][0]!=null)
+           if (data.link[preference[i]][0].substring(0,4)=="http:")
            {
-             video.addSource('mp4',data.link[18][0], true);
+             video.addSource('mp4',data.link[i][0], true);
              break;
            }
          }
+         video.addSource('mp4',data.link[18][0], true);
        }, function(reason) {
-         alert('Failed: ' + reason);
+         console.log('Failed: ' + reason);
        });
      };
      this.search = function (term, type, items, page) {
        results[type].length = 0;
-       data = httpGet('https://www.googleapis.com/youtube/v3/search' +
-                      '?key=' + key +
-                      '&type=' + type +
-                      '&maxResults=' + items +
-                      '&part=' + 'id,snippet' +
-                      '&q=' + term);
-       results[type] = data.items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/search' +
+                             '?key=' + key +
+                             '&type=' + type +
+                             '&maxResults=' + items +
+                             '&part=' + 'id,snippet' +
+                             '&q=' + term);
+       promise.then(function(data) {
+         results[type] = data.items;
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
      this.getChannelInfo = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/channels' +
-                      '?key=' + key +
-                      '&id=' + id +
-                      '&part=' + 'snippet,statistics,brandingSettings');
-       details.channel[0] = data.items[0].snippet; //title, description, publishedAt, thumbnails.default/medium/high
-       details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
-       details.channel[0].id = data.items[0].id;
-       details.channel[0].brandingSettings = data.items[0].brandingSettings;
-       //keywords, featuredChannelsUrls,profileColor,image.bannerImageUrl/bannerMobileImageUrl/bannerTabletLowImageUrl/bannerTabletImageUrl/bannerTvImageUrl
-       service.getChannelVideo(details.channel[0].id);
-       service.getChannelPlaylist(details.channel[0].id);
-       service.getChannelFeatured(details.channel[0].brandingSettings.channel.featuredChannelsUrls);
+       var promise = web.get('https://www.googleapis.com/youtube/v3/channels' +
+                             '?key=' + key +
+                             '&id=' + id +
+                             '&part=' + 'snippet,statistics,brandingSettings');
+       promise.then(function(data) {
+         details.channel[0] = data.items[0].snippet; //title, description, publishedAt, thumbnails.default/medium/high
+         details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
+         details.channel[0].id = data.items[0].id;
+         details.channel[0].brandingSettings = data.items[0].brandingSettings;
+         //keywords, featuredChannelsUrls,profileColor,image.bannerImageUrl/bannerMobileImageUrl/bannerTabletLowImageUrl/bannerTabletImageUrl/bannerTvImageUrl
+         service.getChannelVideo(details.channel[0].id);
+         service.getChannelPlaylist(details.channel[0].id);
+         service.getChannelFeatured(details.channel[0].brandingSettings.channel.featuredChannelsUrls);
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
      this.getChannelVideo = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/search' +
-                      '?key=' + key +
-                      '&channelId=' + id +
-                      '&maxResults=' + '10' +
-                      '&part=' + 'id,snippet' +
-                      '&order=' + 'date');
-       details.channel[0].video = data.items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/search' +
+                             '?key=' + key +
+                             '&channelId=' + id +
+                             '&maxResults=' + '10' +
+                             '&part=' + 'id,snippet' +
+                             '&order=' + 'date');
+       promise.then(function(data) {
+         details.channel[0].video = data.items;
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
+
      };
      this.getChannelPlaylist = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/playlists' +
-                      '?key=' + key +
-                      '&channelId=' + id +
-                      '&maxResults=' + '10' +
-                      '&part=' + 'id,snippet' +
-                      '&order=' + 'date');
-       details.channel[0].playlist = data.items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/playlists' +
+                             '?key=' + key +
+                             '&channelId=' + id +
+                             '&maxResults=' + '10' +
+                             '&part=' + 'id,snippet' +
+                             '&order=' + 'date');
+       promise.then(function(data) {
+         details.channel[0].playlist = data.items;
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
      this.getChannelFeatured = function (id) {
-       details.channel[0].featured = httpGet('https://www.googleapis.com/youtube/v3/channels' +
-                                             '?key=' + key +
-                                             '&id=' + id +
-                                             '&part=' + 'snippet').items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/channels' +
+                             '?key=' + key +
+                             '&id=' + id +
+                             '&part=' + 'snippet');
+       promise.then(function(data) {
+         details.channel[0].featured = data.items;
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
      this.getPlaylistInfo = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/playlists' +
-                      '?key=' + key +
-                      '&id=' + id +
-                      '&part=' + 'snippet');
-       details.playlist[0] = data.items[0].snippet;
-       //if (details.playlist[0].title.length > 40)
-       //    details.playlist[0].title = details.playlist[0].title.substr(0, 40) + '...';
-       console.log(JSON.stringify(details.playlist[0]));
-       service.getPlaylistVideo(id);
+       var promise = web.get('https://www.googleapis.com/youtube/v3/playlists' +
+                             '?key=' + key +
+                             '&id=' + id +
+                             '&part=' + 'snippet');
+       promise.then(function(data) {
+         details.playlist[0] = data.items[0].snippet;
+         service.getPlaylistVideo(id);
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
      this.getPlaylistVideo = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/playlistItems' +
-                      '?key=' + key +
-                      '&playlistId=' + id +
-                      '&maxResults=' + '10' +
-                      '&part=' + 'id,snippet' +
-                      '&order=' + 'date');
-       details.playlist[0].video = data.items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/playlistItems' +
+                             '?key=' + key +
+                             '&playlistId=' + id +
+                             '&maxResults=' + '10' +
+                             '&part=' + 'id,snippet' +
+                             '&order=' + 'date');
+       promise.then(function(data) {
+         details.playlist[0].video = data.items;
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
+
      };
      this.getVideoInfo = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/videos' +
-                      '?key=' + key +
-                      '&id=' + id +
-                      '&part=' + 'id,snippet');
-       details.video[0] = data.items[0];
+       var promise = web.get('https://www.googleapis.com/youtube/v3/videos' +
+                             '?key=' + key +
+                             '&id=' + id +
+                             '&part=' + 'id,snippet');
+       promise.then(function(data) {
+         details.video[0] = data.items[0];
+         console.log(details.video[0]);
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
        service.getVideoRelated(id);
-       return details.video[0];
      };
      this.getVideoRelated = function (id) {
-       data = httpGet('https://www.googleapis.com/youtube/v3/search' +
-                      '?key=' + key +
-                      '&relatedToVideoId=' + id +
-                      '&part=' + 'id,snippet' +
-                      '&type=' + 'video');
-       details.related = data.items;
+       var promise = web.get('https://www.googleapis.com/youtube/v3/search' +
+                             '?key=' + key +
+                             '&relatedToVideoId=' + id +
+                             '&part=' + 'id,snippet' +
+                             '&type=' + 'video');
+       promise.then(function(data) {
+         details.related = data.items;
+         service.getVideoRelated(id);
+       }, function(reason) {
+         console.log('Failed: ' + reason);
+       });
      };
    }]);
 
@@ -271,15 +308,13 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
   }
   $scope.launch = function (id) {
     VideosService.launchPlayer(id);
+    VideosService.getVideoInfo(id);
     $scope.closeModal('search');
     $scope.closeModal('channel');
     $scope.closeModal('bookmark');
   };
   $scope.delete = function (list, id) {
     VideosService.deleteVideo(list, id);
-  };
-  $scope.test = function () {
-    VideosService.getVideoInfo(results.video[0].videoId);
   };
   $scope.search = function () {
     VideosService.search(this.query, 'channel', '2', '');

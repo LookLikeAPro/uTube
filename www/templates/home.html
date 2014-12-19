@@ -43,9 +43,9 @@
       <a ng-click="tabTo(2)" class="tab-item">Related</a>
     </div>
     <div ng-show="tab==0" class="padding">
-      <h2>{{queue[0].snippet.title}}</h2>
-      <p>{{queue[0].snippet.channelTitle}}</p>
-      <p>{{queue[0].snippet.description}}</p>
+      <h2>{{details.video[0].snippet.title}}</h2>
+      <p>{{details.video[0].snippet.channelTitle}}</p>
+      <p>{{details.video[0].snippet.description}}</p>
     </div>
     <ion-scroll ng-show="tab==1" class="padding" direction="y" style="width:100%; height:100%">
       <div style="width:100%; height:100%">
