@@ -4,3 +4,6 @@
 node_modules/
 platforms/
 plugins/
+.idea
+.brackets.json
+**/.DS_Store

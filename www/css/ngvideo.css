@@ -130,7 +130,7 @@ section.video section.timeline {
     width: 485px;
     width: calc(100% - 60px);
     left: 30px;
-    bottom: 32px;
+    bottom: 0px;
 }
 section.video section.timeline input {
     width: 100%;

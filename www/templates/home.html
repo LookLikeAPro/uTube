@@ -1,4 +1,4 @@
-<ion-pane style="top:44px">
+<ion-content [scrollbar-y="false"] style="background-color:white">
   <!-- YOUTUBE IFRAME PLAYER
 <div style="background-color:black; width:100%">
 <div style="max-width:600px; min-width:300px; height:auto; margin:auto">
@@ -12,27 +12,25 @@
       <!-- Base Directive -->
       <section class="video" ng-video>
         <!-- Screen Directive -->
-        <video vi-screen></video>
+        <video vi-screen autoplay></video>
+        <!--
         <section vi-controls class="controls">
-          <span vi-controls-play title="Play" class="glyphicon glyphicon-play"></span>
-          <span vi-controls-pause title="Pause" class="glyphicon glyphicon-pause"></span>
-        </section>
+          <span vi-controls-play title="Play" class="icon ion-ios7-play"></span>
+          <span vi-controls-pause title="Pause" class="icon ion-ios7-pause"></span>
+        </section>-->
         <!-- Full Screen Directive -->
-        <section class="full-screen">
-          <span title="Full Screen" vi-full-screen-toggle class="glyphicon glyphicon-fullscreen"></span>
+        <section class="full-screen" >
+          <span title="Full Screen" vi-full-screen-toggle class="icon ion-arrow-expand"></span>
         </section>
         <!-- Feedback Directive -->
         <section vi-feedback class="feedback">
-          <span class="buffering" ng-show="buffering">Buffering...</span>
-          <section class="loading" ng-show="loading">
-            Loading...
+          <span class="buffering" ng-show="buffering"><i class="icon ion-ios7-fastforward"></i></span>
+          <section class="loading" ng-show="loading"><i class="icon ion-ios7-loop-strong"></i>
           </section>
           <!-- Timeline Directive -->
           <section class="timeline">
             <input vi-timeline />
           </section>
-          <!-- Buffer Directive -->
-          <section vi-buffer class="buffer"></section>
         </section>
       </section>
     </section>
@@ -47,13 +45,11 @@
       <p>{{details.video[0].snippet.channelTitle}}</p>
       <p>{{details.video[0].snippet.description}}</p>
     </div>
-    <ion-scroll ng-show="tab==1" class="padding" direction="y" style="width:100%; height:100%">
-      <div style="width:100%; height:100%">
+      <div ng-show="tab==1" class="padding" style="width:100%; height:100%">
       <h2>Coming Soon</h2>
       <p>Youtube API V3 does not support comments yet. Feature will be implemented aroung April 2015.</p>
       </div>
-    </ion-scroll>
-    <ion-scroll ng-show="tab==2" style="margin: 10 0 10 10" direction="y" style="width:100%; overflow: scroll;">
+    <div ng-show="tab==2" style="margin: 10 0 10 10" direction="y">
       <ion-list>
         <ion-item data-ng-repeat="item in details.related" class="item-thumbnail-left"
                   ng-click="queueGoTo(item.id.videoId)">
@@ -66,9 +62,5 @@
           <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Share</ion-option-button>
         </ion-item>
       </ion-list>
-      <ion-infinite-scroll
-    on-infinite="loadMore()"
-    distance="1%">
-  </ion-infinite-scroll>
-    </ion-scroll>
-</ion-pane>
+  </div>
+</ion-content>
