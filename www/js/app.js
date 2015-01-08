@@ -7,7 +7,7 @@ var details = {channel: [], playlist: [], video: [], related: []};
 //var quality = {22: "720p", 43: "480p", 18: "480p", 5:"360p", 36:"360p", 17:"240p"};
 //var maxQuality = "22";
 var preference = [43, 18, 5, 36, 17, 22];
-var async = false;
+var async = true;
 
 //=============================Functions==============================
 var httpGet = function (URL) {
@@ -73,7 +73,7 @@ app.factory('$localstorage', ['$window', function ($window) {
  */
 app.service(
   'VideosService',
-  ['$window', '$rootScope', '$log', '$localstorage', '$sce', 'web', 'video', function ($window, $rootScope, $q, $localstorage, $sce, web,video) {
+  ['$window','$log', '$localstorage', '$sce', 'web', 'video', function ($window, $q, $localstorage, $sce, web,video) {
     var service = this;
     /*
      var youtube = {
@@ -161,7 +161,7 @@ app.service(
       }
     };
     this.launchPlayer = function (id) {
-      query = 'http://jerryzhou.net:2000/http://ytapi.gitnol.com/get.php?apikey=03cedab1gdghtelxwd8d5272d1394d12&id='+id;
+      query = 'http://jerryzhou.net/cors.php?http://ytapi.gitnol.com/get.php?apikey=03cedab1gdghtelxwd8d5272d1394d12&id='+id;
       service.get(query, function(data){for (i=0; i<preference.length; i++)
         {
           if (data.link[preference[i]][0].substring(0,4)=="http:")
