@@ -2,10 +2,10 @@
 var key = 'AIzaSyAVLvOAGsqYJFqqV4SXbk4IZSUPPDJApQo';
 //Global Variables
 var results = {channel: [], playlist: [], video: []};
+var bookmarks = {channel:[], playlist:[], video:[]};
 var details = {channel: [], playlist: [], video: [], related: []};
 //var queue = [];
 //var quality = {22: "720p", 43: "480p", 18: "480p", 5:"360p", 36:"360p", 17:"240p"};
-//var maxQuality = "22";
 var preference = [43, 18, 5, 36, 17, 22];
 var async = true;
 
@@ -18,7 +18,6 @@ var httpGet = function (URL) {
   xmlHttp.send(null);
   return JSON.parse(xmlHttp.responseText);
 }
-
 
 var app = angular.module('App', ['ionic', 'ngCordova', "ngSanitize", 'ngVideo']);
 /*
@@ -162,15 +161,16 @@ app.service(
     };
     this.launchPlayer = function (id) {
       query = 'http://jerryzhou.net/cors.php?http://ytapi.gitnol.com/get.php?apikey=03cedab1gdghtelxwd8d5272d1394d12&id='+id;
-      service.get(query, function(data){for (i=0; i<preference.length; i++)
+      service.get(query, function(data){
+        for (i=0; i<preference.length; i++)
         {
-          if (data.link[preference[i]][0].substring(0,4)=="http:")
+          if (data.link[preference[i]]!==undefined)
           {
-            video.addSource('mp4',data.link[i][0], true);
+            video.addSource('mp4',data.link[preference[i]][0], true);
             break;
           }
         }
-        video.addSource('mp4',data.link[18][0], true);});
+      });
     };
     this.search = function (term, type, items, page) {
       results[type].length = 0;
@@ -187,15 +187,15 @@ app.service(
         '?key=' + key +
         '&id=' + id +
         '&part=' + 'snippet,statistics,brandingSettings';
-      service.get(query, function(data)
-                  {details.channel[0] = data.items[0].snippet; //title, description, publishedAt, thumbnails.default/medium/high
-                   details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
-                   details.channel[0].id = data.items[0].id;
-                   details.channel[0].brandingSettings = data.items[0].brandingSettings;
-                   //keywords, featuredChannelsUrls,profileColor,image.bannerImageUrl/bannerMobileImageUrl/bannerTabletLowImageUrl/bannerTabletImageUrl/bannerTvImageUrl
-                   service.getChannelVideo(details.channel[0].id);
-                   service.getChannelPlaylist(details.channel[0].id);
-                   service.getChannelFeatured(details.channel[0].brandingSettings.channel.featuredChannelsUrls);});
+      service.get(query, function(data){
+        details.channel[0] = data.items[0].snippet; //title, description, publishedAt, thumbnails.default/medium/high
+        details.channel[0].statistics = data.items[0].statistics; //viewCount, commentCount,subscriberCount,hiddenSubscriberCount,videoCount
+        details.channel[0].id = data.items[0].id;
+        details.channel[0].brandingSettings = data.items[0].brandingSettings;
+        //keywords, featuredChannelsUrls,profileColor,image.bannerImageUrl/bannerMobileImageUrl/bannerTabletLowImageUrl/bannerTabletImageUrl/bannerTvImageUrl
+        service.getChannelVideo(details.channel[0].id);
+        service.getChannelPlaylist(details.channel[0].id);
+        service.getChannelFeatured(details.channel[0].brandingSettings.channel.featuredChannelsUrls);});
     };
     this.getChannelVideo = function (id) {
       query = 'https://www.googleapis.com/youtube/v3/search' +
@@ -255,6 +255,10 @@ app.service(
         '&type=' + 'video';
       service.get(query, function(data){ details.related = data.items;});
     };
+    //===========================LOCALSTORAGE==============================
+    this.bookmark = function (id, type){
+      //bookmarks[type].push()
+    }
   }]);
 
 app.run(function ($localstorage) {
