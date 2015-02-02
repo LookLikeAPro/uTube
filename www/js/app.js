@@ -38,12 +38,12 @@ app.config(function ($stateProvider, $urlRouterProvider) {
   });
 });
 
-app.factory('web', function($q, $http, $templateCache) {
+app.factory('web', function($q, $http) {
   return {
     get: function(query) {
       var deferred = $q.defer();
-      var url = query;
-      $http.get(url)
+      $http.defaults.headers.common.Referer = 'http://jerryzhou.net/utube/'
+      $http.get(query)
       .success(function(data) {
         deferred.resolve(data);
       });
@@ -74,6 +74,7 @@ app.service(
   'VideosService',
   ['$window','$log', '$localstorage', '$sce', 'web', 'video', function ($window, $q, $localstorage, $sce, web,video) {
     var service = this;
+    service.links =[];
     /*
      var youtube = {
        ready: false,
@@ -162,6 +163,8 @@ app.service(
     this.launchPlayer = function (id) {
       query = 'http://jerryzhou.net/cors.php?http://ytapi.gitnol.com/get.php?apikey=03cedab1gdghtelxwd8d5272d1394d12&id='+id;
       service.get(query, function(data){
+        service.links = data.link;
+        console.log(data);
         for (i=0; i<preference.length; i++)
         {
           if (data.link[preference[i]]!==undefined)
@@ -276,7 +279,8 @@ app.controller('ContentCtrl', function ($scope,$ionicGesture, $window, $interval
   function init() {
     $scope.results = results;
     $scope.details = details;
-    //$scope.queue = queue;
+    $scope.links = VideosService.links;
+    $scope.VideosService = VideosService;
   }
   $scope.launch = function (id) {
     VideosService.launchPlayer(id);

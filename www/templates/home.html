@@ -14,10 +14,10 @@
         <!-- Screen Directive -->
         <video vi-screen autoplay></video>
         <!--
-        <section vi-controls class="controls">
-          <span vi-controls-play title="Play" class="icon ion-ios7-play"></span>
-          <span vi-controls-pause title="Pause" class="icon ion-ios7-pause"></span>
-        </section>-->
+<section vi-controls class="controls">
+<span vi-controls-play title="Play" class="icon ion-ios7-play"></span>
+<span vi-controls-pause title="Pause" class="icon ion-ios7-pause"></span>
+</section>-->
         <!-- Full Screen Directive -->
         <section class="full-screen" >
           <span title="Full Screen" vi-full-screen-toggle class="icon ion-arrow-expand"></span>
@@ -35,32 +35,50 @@
       </section>
     </section>
   </div>
-    <div class="item tabs tabs-secondary">
-      <a ng-click="tabTo(0)" class="tab-item">Description</a>
-      <a ng-click="tabTo(1)" class="tab-item">Comments</a>
-      <a ng-click="tabTo(2)" class="tab-item">Related</a>
+  <div class="item tabs tabs-secondary">
+    <a ng-click="tabTo(0)" class="tab-item">Description</a>
+    <a ng-click="tabTo(1)" class="tab-item">Comments</a>
+    <a ng-click="tabTo(2)" class="tab-item">Related</a>
+  </div>
+  <div ng-show="tab==0">
+    <div class="padding">
+    <h2>{{details.video[0].snippet.title}}</h2>
+    <p>{{details.video[0].snippet.channelTitle}}</p>
+    <p>{{details.video[0].snippet.description}}</p>
     </div>
-    <div ng-show="tab==0" class="padding">
-      <h2>{{details.video[0].snippet.title}}</h2>
-      <p>{{details.video[0].snippet.channelTitle}}</p>
-      <p>{{details.video[0].snippet.description}}</p>
-    </div>
-      <div ng-show="tab==1" class="padding" style="width:100%; height:100%">
-      <h2>Coming Soon</h2>
-      <p>Youtube API V3 does not support comments yet. Feature will be implemented aroung April 2015.</p>
+    <div class="card" style="margin-left:0px; margin-right:0px">
+      <div class="item tabs tabs-secondary">
+        <a class="tab-item">
+          Download
+        </a>
+        <a class="tab-item"  target="_self" ng-href="{{VideosService.links[22][0]}}" download="video.mp4">
+          720p
+        </a>
+        <a class="tab-item" ng-href="{{VideosService.links[43][0]}}">
+          480p
+        </a>
+        <a class="tab-item" ng-href="{{VideosService.links[17][0]}}">
+          SD
+        </a>
       </div>
-    <div ng-show="tab==2" style="margin: 10 0 10 10" direction="y">
-      <ion-list>
-        <ion-item data-ng-repeat="item in details.related" class="item-thumbnail-left"
-                  ng-click="queueGoTo(item.id.videoId)">
-          <img style="margin-top:6px" ng-src="{{item.snippet.thumbnails.default.url}}"/>
-          <h2 style="margin-bottom:0">{{item.snippet.title}}</h2>
-          <p style="margin-top:0; margin-bottom:0">{{item.snippet.channelTitle}}</p>
-          <p style="margin-top:0">{{item.snippet.description}}</p>
-          <ion-option-button class="button-calm" ng-click="queueAdd(item.id.videoId)">Queue</ion-option-button>
-          <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Bookmark</ion-option-button>
-          <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Share</ion-option-button>
-        </ion-item>
-      </ion-list>
+    </div>
+  </div>
+  <div ng-show="tab==1" class="padding" style="width:100%; height:100%">
+    <h2>Coming Soon</h2>
+    <p>Youtube API V3 does not support comments yet. Feature will be implemented around April 2015.</p>
+  </div>
+  <div ng-show="tab==2" style="margin: 10 0 10 10" direction="y">
+    <ion-list>
+      <ion-item data-ng-repeat="item in details.related" class="item-thumbnail-left"
+                ng-click="queueGoTo(item.id.videoId)">
+        <img style="margin-top:6px" ng-src="{{item.snippet.thumbnails.default.url}}"/>
+        <h2 style="margin-bottom:0">{{item.snippet.title}}</h2>
+        <p style="margin-top:0; margin-bottom:0">{{item.snippet.channelTitle}}</p>
+        <p style="margin-top:0">{{item.snippet.description}}</p>
+        <ion-option-button class="button-calm" ng-click="queueAdd(item.id.videoId)">Queue</ion-option-button>
+        <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Bookmark</ion-option-button>
+        <ion-option-button class="button-assertive button-outline" ng-click="edit(item)">Share</ion-option-button>
+      </ion-item>
+    </ion-list>
   </div>
 </ion-content>
